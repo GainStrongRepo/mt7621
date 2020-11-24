@@ -1,0 +1,45 @@
+choice
+    prompt "mt7663 build type"
+    depends on PACKAGE_kmod-mt7663
+    default MT7663E_BUILD_KO
+config  MT7663E_BUILD_KO
+    bool "build as module (mt7663.ko)"
+    select PACKAGE_kmod-mt7663-ko
+config  MT7663E_BUILD_IN
+    bool "build into kernel"
+    select PACKAGE_kmod-mt7663-in
+endchoice
+
+
+# entries start with "KCONFIG" will be applied to kernel.
+config  KCONFIG_WIFI_MT7663E
+    bool
+    default n
+
+# ---------------- 1st card ----------------
+config  KCONFIG_FIRST_IF_MT7663E
+    bool "mt7663 as 1st card"
+    select KCONFIG_WIFI_MT7663E
+    default n
+config  KCONFIG_RT_FIRST_CARD
+    string
+    depends on KCONFIG_FIRST_IF_MT7663E
+    default "7663e"
+config  KCONFIG_RT_FIRST_IF_RF_OFFSET
+    hex
+    depends on KCONFIG_FIRST_IF_MT7663E
+    default 0x0
+
+# ---------------- 2nd card ----------------
+config  KCONFIG_SECOND_IF_MT7663E
+    bool "mt7663 as 2nd card"
+    select KCONFIG_WIFI_MT7663E
+    default n
+config  KCONFIG_RT_SECOND_CARD
+    string
+    depends on KCONFIG_SECOND_IF_MT7663E
+    default "7663e"
+config  KCONFIG_RT_SECOND_IF_RF_OFFSET
+    hex
+    depends on KCONFIG_SECOND_IF_MT7663E
+    default 0x8000

@@ -1,0 +1,56 @@
+Index: busybox-1.23.2/init/halt.c
+===================================================================
+--- busybox-1.23.2.orig/init/halt.c	2015-03-23 11:06:55.000000000 +0800
++++ busybox-1.23.2/init/halt.c	2018-11-05 18:07:37.649098000 +0800
+@@ -94,6 +94,41 @@
+ #define write_wtmp() ((void)0)
+ #endif
+ 
++static void shutdown_all_wifi(void)
++{
++	int i;
++	char cmd[100];
++
++	sprintf(cmd, "ifconfig apcli%d down 1>/dev/null 2>&1; \
++			ifconfig apclix%d down 1>/dev/null 2>&1; \
++			ifconfig apclii%d down 1>/dev/null 2>&1",
++			0,0,0);
++	system(cmd);
++
++	sprintf(cmd, "ifconfig mesh%d down 1>/dev/null 2>&1; \
++					ifconfig meshx%d down 1>/dev/null 2>&1; \
++					ifconfig meshi%d down 1>/dev/null 2>&1",
++						0,0,0);
++       system(cmd);
++
++	for(i=3;i>=0;i--){
++		sprintf(cmd, "ifconfig wds%d down 1>/dev/null 2>&1; \
++						ifconfig wdsx%d down 1>/dev/null 2>&1; \
++						ifconfig wdsi%d down 1>/dev/null 2>&1",
++						i,i,i);
++        	system(cmd);
++	}
++
++	for(i=15; i>=0; i--){
++		sprintf(cmd, "ifconfig ra%d down 1>/dev/null 2>&1; \
++						ifconfig rax%d down 1>/dev/null 2>&1; \
++						ifconfig rai%d down 1>/dev/null 2>&1",
++						i,i,i);
++		system(cmd);
++	}
++}
++
++
+ 
+ int halt_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ int halt_main(int argc UNUSED_PARAM, char **argv)
+@@ -132,6 +167,9 @@
+ 
+ 	/* Perform action. */
+ 	rc = 1;
++
++	shutdown_all_wifi();
++
+ 	if (!(flags & 4)) { /* no -f */
+ //TODO: I tend to think that signalling linuxrc is wrong
+ // pity original author didn't comment on it...

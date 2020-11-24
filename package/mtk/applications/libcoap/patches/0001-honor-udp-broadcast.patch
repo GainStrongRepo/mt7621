@@ -1,0 +1,460 @@
+--- a/include/coap/address.h
++++ b/include/coap/address.h
+@@ -64,6 +64,7 @@ typedef struct coap_address_t {
+     struct sockaddr_in      sin;
+     struct sockaddr_in6     sin6;
+   } addr;
++  int enable_broadcast;
+ } coap_address_t;
+ 
+ /**
+@@ -127,6 +128,7 @@ coap_address_copy( coap_address_t *dst,
+   } else {
+     memcpy( &dst->addr, &src->addr, src->size );
+   }
++  dst->enable_broadcast = src->enable_broadcast;
+ #endif
+ }
+ 
+--- a/include/coap/coap_io.h
++++ b/include/coap/coap_io.h
+@@ -46,6 +46,10 @@ typedef struct coap_socket_t {
+   coap_fd_t fd;
+ #endif /* WITH_LWIP */
+   coap_socket_flags_t flags;
++  int is_udp_bc;  /* UDP broadcast */
++  struct coap_address_t bc_addr;  /* addr for broadcast */
++  struct coap_address_t *s_remote_addr;  /* addr of last received packet */
++  struct coap_address_t *s_local_addr;  /* addr of last received packet */
+ } coap_socket_t;
+ 
+ /**
+--- a/include/coap/inetif.h
++++ b/include/coap/inetif.h
+@@ -0,0 +1,13 @@
++#ifndef _COAP_INETIF_H_
++#define _COAP_INETIF_H_
++
++#include <stdint.h>
++#include <stdbool.h>
++
++bool generate_if_table(void);
++void free_if_table(void);
++
++uint32_t get_ip4addr_from_ifindex(int ifindex);
++bool is_broadcast_ip4addr(int ifindex, uint32_t addr);
++
++#endif /* _COAP_INETIF_H_ */
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -82,7 +82,8 @@ libcoap_@LIBCOAP_API_VERSION@_la_SOURCES
+   src/resource.c \
+   src/str.c \
+   src/subscribe.c \
+-  src/uri.c
++  src/uri.c \
++  src/inetif.c
+ 
+ ## Define the list of public header files and their install location.
+ ## The list defined here will be used within the include/Makefile.am
+@@ -114,7 +115,8 @@ libcoap_include_HEADERS = \
+   $(top_srcdir)/include/coap/subscribe.h \
+   $(top_srcdir)/include/coap/uri.h \
+   $(top_srcdir)/include/coap/uthash.h \
+-  $(top_srcdir)/include/coap/utlist.h
++  $(top_srcdir)/include/coap/utlist.h \
++  $(top_srcdir)/include/coap/inetif.h
+ 
+ # If there is a API change to something $(LIBCOAP_API_VERSION) > 1 the install
+ # prefix for the header files has to change to not conflict the older version
+--- a/src/coap_io.c
++++ b/src/coap_io.c
+@@ -53,6 +53,10 @@
+ #include "pdu.h"
+ #include "utlist.h"
+ 
++#ifndef s6_words
++#define s6_words s6_addr16
++#endif
++
+ #if !defined(WITH_CONTIKI) && !defined(WITH_LWIP)
+  /* define generic PKTINFO for IPv4 */
+ #if defined(IP_PKTINFO)
+@@ -542,17 +546,29 @@ coap_socket_connect_udp(coap_socket_t *s
+     return 1;
+   }
+ 
+-  if (connect(sock->fd, &connect_addr.addr.sa, connect_addr.size) == COAP_SOCKET_ERROR) {
+-    coap_log(LOG_WARNING, "coap_socket_connect_udp: connect: %s\n", coap_socket_strerror());
+-    goto error;
+-  }
++  if (connect_addr.enable_broadcast) {
++    sock->is_udp_bc = 1;
++    sock->bc_addr = connect_addr;
++    sock->s_local_addr = local_addr;
++    sock->s_remote_addr = remote_addr;
+ 
+-  if (getsockname(sock->fd, &local_addr->addr.sa, &local_addr->size) == COAP_SOCKET_ERROR) {
+-    coap_log(LOG_WARNING, "coap_socket_connect_udp: getsockname: %s\n", coap_socket_strerror());
++    if (setsockopt(sock->fd, SOL_SOCKET, SO_BROADCAST, (char *) &on, sizeof(on)) == COAP_SOCKET_ERROR)
++      coap_log(LOG_WARNING, "coap_socket_connect_udp: setsockopt SO_BROADCAST: %s\n", coap_socket_strerror());
+   }
+ 
+-  if (getpeername(sock->fd, &remote_addr->addr.sa, &remote_addr->size) == COAP_SOCKET_ERROR) {
+-    coap_log(LOG_WARNING, "coap_socket_connect_udp: getpeername: %s\n", coap_socket_strerror());
++  if (!sock->is_udp_bc) {
++    if (connect(sock->fd, &connect_addr.addr.sa, connect_addr.size) == COAP_SOCKET_ERROR) {
++      coap_log(LOG_WARNING, "coap_socket_connect_udp: connect: %s\n", coap_socket_strerror());
++      goto error;
++    }
++
++    if (getsockname(sock->fd, &local_addr->addr.sa, &local_addr->size) == COAP_SOCKET_ERROR) {
++      coap_log(LOG_WARNING, "coap_socket_connect_udp: getsockname: %s\n", coap_socket_strerror());
++    }
++
++    if (getpeername(sock->fd, &remote_addr->addr.sa, &remote_addr->size) == COAP_SOCKET_ERROR) {
++      coap_log(LOG_WARNING, "coap_socket_connect_udp: getpeername: %s\n", coap_socket_strerror());
++    }
+   }
+ 
+   sock->flags |= COAP_SOCKET_CONNECTED;
+@@ -699,11 +715,27 @@ coap_network_send(coap_socket_t *sock, c
+   if (!coap_debug_send_packet()) {
+     bytes_written = (ssize_t)datalen;
+   } else if (sock->flags & COAP_SOCKET_CONNECTED) {
++    if (!sock->is_udp_bc)
++    {
+ #ifdef _WIN32
+-    bytes_written = send(sock->fd, (const char *)data, (int)datalen, 0);
++      bytes_written = send(sock->fd, (const char *)data, (int)datalen, 0);
+ #else
+-    bytes_written = send(sock->fd, data, datalen, 0);
++      bytes_written = send(sock->fd, data, datalen, 0);
+ #endif
++    }
++    else
++    {
++#ifdef _WIN32
++      bytes_written = sendto(sock->fd, (const char *)data, (int)datalen, 0, &sock->bc_addr.addr.sa, sock->bc_addr.size);
++#else
++      bytes_written = sendto(sock->fd, data, datalen, 0, &sock->bc_addr.addr.sa, sock->bc_addr.size);
++#endif
++      if (sock->s_local_addr) {
++        if (getsockname(sock->fd, &sock->s_local_addr->addr.sa, &sock->s_local_addr->size) == COAP_SOCKET_ERROR) {
++          coap_log(LOG_WARNING, "coap_network_send: getsockname: %s\n", coap_socket_strerror());
++        }
++      }
++    }
+   } else {
+ #ifndef WITH_CONTIKI
+     /* a buffer large enough to hold all packet info types, ipv6 is the largest */
+@@ -858,11 +890,23 @@ coap_network_read(coap_socket_t *sock, c
+   }
+ 
+   if (sock->flags & COAP_SOCKET_CONNECTED) {
++    if (!sock->is_udp_bc)
++    {
+ #ifdef _WIN32
+-    len = recv(sock->fd, (char *)packet->payload, COAP_RXBUFFER_SIZE, 0);
++      len = recv(sock->fd, (char *)packet->payload, COAP_RXBUFFER_SIZE, 0);
+ #else
+-    len = recv(sock->fd, packet->payload, COAP_RXBUFFER_SIZE, 0);
++      len = recv(sock->fd, packet->payload, COAP_RXBUFFER_SIZE, 0);
+ #endif
++    }
++    else
++    {
++      sock->s_remote_addr->size = sizeof(sock->s_remote_addr->addr);
++#ifdef _WIN32
++      len = recvfrom(sock->fd, (char *) packet->payload, COAP_RXBUFFER_SIZE, 0, &sock->s_remote_addr->addr.sa, &sock->s_remote_addr->size);
++#else
++      len = recvfrom(sock->fd, packet->payload, COAP_RXBUFFER_SIZE, 0, &sock->s_remote_addr->addr.sa, &sock->s_remote_addr->size);
++#endif
++    }
+     if (len < 0) {
+ #ifdef _WIN32
+       if (WSAGetLastError() == WSAECONNRESET) {
+@@ -980,6 +1024,29 @@ coap_network_read(coap_socket_t *sock, c
+ #endif /* IP_PKTINFO */
+       }
+     }
++
++    if (packet->dst.addr.sa.sa_family == AF_INET)
++    {
++      if (is_broadcast_ip4addr(packet->ifindex, packet->dst.addr.sin.sin_addr.s_addr))
++      {
++        packet->dst.addr.sin.sin_addr.s_addr = get_ip4addr_from_ifindex(packet->ifindex);
++      }
++    }
++    else if (packet->dst.addr.sa.sa_family == AF_INET6)
++    {
++      if (IN6_IS_ADDR_V4MAPPED(&packet->dst.addr.sin6.sin6_addr))
++      {
++        uint32_t addr;
++
++        memcpy(&addr, &packet->dst.addr.sin6.sin6_addr.s6_words[6], 4);
++
++        if (is_broadcast_ip4addr(packet->ifindex, addr))
++        {
++          addr = get_ip4addr_from_ifindex(packet->ifindex);
++          memcpy(&packet->dst.addr.sin6.sin6_addr.s6_words[6], &addr, 4);
++        }
++      }
++    }
+ #endif /* !defined(WITH_CONTIKI) && !defined(WITH_LWIP) */
+ #ifdef WITH_CONTIKI
+     /* FIXME: untested, make this work */
+--- a/src/inetif.c
++++ b/src/inetif.c
+@@ -0,0 +1,251 @@
++
++#include "inetif.h"
++
++#include <sys/types.h>
++
++#ifdef _WIN32
++#include <Windows.h>
++#include <iphlpapi.h>
++
++static PMIB_IPADDRTABLE pIPAddrTable = NULL;
++
++bool generate_if_table(void)
++{
++  DWORD dwSize = 0;
++
++  if (pIPAddrTable)
++    return true;
++
++  pIPAddrTable = (MIB_IPADDRTABLE *) malloc(sizeof(MIB_IPADDRTABLE));
++
++  if (!pIPAddrTable)
++    return false;
++
++  if (GetIpAddrTable(pIPAddrTable, &dwSize, 0) == ERROR_INSUFFICIENT_BUFFER)
++  {
++    free(pIPAddrTable);
++    pIPAddrTable = (MIB_IPADDRTABLE *) malloc(dwSize);
++
++    if (!pIPAddrTable)
++      return false;
++  }
++
++  if (GetIpAddrTable(pIPAddrTable, &dwSize, 0) != NO_ERROR)
++  {
++    free(pIPAddrTable);
++    pIPAddrTable = NULL;
++    return false;
++  }
++
++  return true;
++}
++
++void free_if_table(void)
++{
++  if (pIPAddrTable)
++  {
++    free(pIPAddrTable);
++    pIPAddrTable = NULL;
++  }
++}
++
++uint32_t get_ip4addr_from_ifindex(int ifindex)
++{
++  uint32_t addr = 0;
++  int i;
++
++  if (!generate_if_table())
++    return 0;
++
++  for (i = 0; i < (int) pIPAddrTable->dwNumEntries; i++)
++  {
++    if (pIPAddrTable->table[i].dwIndex == ifindex)
++    {
++      if (!(pIPAddrTable->table[i].wType & (MIB_IPADDR_DISCONNECTED | MIB_IPADDR_DELETED)))
++      {
++        if (pIPAddrTable->table[i].wType & MIB_IPADDR_PRIMARY)
++          return pIPAddrTable->table[i].dwAddr;
++      }
++    }
++  }
++
++  for (i = 0; i < (int) pIPAddrTable->dwNumEntries; i++)
++  {
++    if (pIPAddrTable->table[i].dwIndex == ifindex)
++    {
++      if (!(pIPAddrTable->table[i].wType & (MIB_IPADDR_DISCONNECTED | MIB_IPADDR_DELETED)))
++      {
++        if (pIPAddrTable->table[i].wType & MIB_IPADDR_DYNAMIC)
++          return pIPAddrTable->table[i].dwAddr;
++      }
++    }
++  }
++
++  return 0;
++}
++
++bool is_broadcast_ip4addr(int ifindex, uint32_t addr)
++{
++  int i;
++
++  if (addr == INADDR_BROADCAST)
++    return true;
++
++  if (!generate_if_table())
++    return false;
++
++  for (i = 0; i < (int) pIPAddrTable->dwNumEntries; i++)
++  {
++    if (pIPAddrTable->table[i].dwIndex == ifindex)
++    {
++      if (!(pIPAddrTable->table[i].wType & (MIB_IPADDR_DISCONNECTED | MIB_IPADDR_DELETED)))
++      {
++        if (pIPAddrTable->table[i].dwBCastAddr == addr)
++          return true;
++      }
++    }
++  }
++
++  for (i = 0; i < (int) pIPAddrTable->dwNumEntries; i++)
++  {
++    if (pIPAddrTable->table[i].dwIndex == ifindex)
++    {
++      if (!(pIPAddrTable->table[i].wType & (MIB_IPADDR_DISCONNECTED | MIB_IPADDR_DELETED)))
++      {
++        if ((pIPAddrTable->table[i].dwMask & pIPAddrTable->table[i].dwAddr) ==
++          (pIPAddrTable->table[i].dwMask & addr))
++        {
++          if (((~pIPAddrTable->table[i].dwMask) & addr) == (~pIPAddrTable->table[i].dwMask))
++            return true;
++        }
++      }
++    }
++  }
++
++  return false;
++}
++#else
++#include <unistd.h>
++#include <ifaddrs.h>
++#include <net/if.h>
++#include <netinet/in.h>
++#include <string.h>
++
++static struct ifaddrs *ifaddr = NULL;
++
++bool generate_if_table(void)
++{
++  if (ifaddr)
++    return true;
++
++  if (getifaddrs(&ifaddr) == -1)
++  {
++    ifaddr = NULL;
++    return false;
++  }
++
++  return true;
++}
++
++void free_if_table(void)
++{
++  if (ifaddr)
++  {
++    freeifaddrs(ifaddr);
++    ifaddr = NULL;
++  }
++}
++
++uint32_t get_ip4addr_from_ifindex(int ifindex)
++{
++  char ifname[IF_NAMESIZE];
++  struct ifaddrs *ifa;
++  struct sockaddr_in *sa;
++
++  if (!generate_if_table())
++    return 0;
++
++  if (!if_indextoname(ifindex, ifname))
++    return 0;
++
++  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
++  {
++    if (ifa->ifa_addr == NULL)
++      continue;
++
++    if (!strcmp(ifname, ifa->ifa_name))
++    {
++      if (ifa->ifa_addr->sa_family == AF_INET)
++      {
++        sa = (struct sockaddr_in *) ifa->ifa_addr;
++        return sa->sin_addr.s_addr;
++      }
++    }
++  }
++
++  return 0;
++}
++
++bool is_broadcast_ip4addr(int ifindex, uint32_t addr)
++{
++  char ifname[IF_NAMESIZE];
++  struct ifaddrs *ifa;
++  struct sockaddr_in *sa;
++  uint32_t netmask;
++
++  if (addr == 0xffffffff)
++    return true;
++
++  if (!generate_if_table())
++    return false;
++
++  if (!if_indextoname(ifindex, ifname))
++    return false;
++
++  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
++  {
++    if (ifa->ifa_addr == NULL)
++      continue;
++
++    if (!strcmp(ifname, ifa->ifa_name))
++    {
++      if (ifa->ifa_addr->sa_family == AF_INET)
++      {
++        if ((ifa->ifa_flags & IFF_BROADCAST) == 0)
++          continue;
++        
++        sa = (struct sockaddr_in *) ifa->ifa_ifu.ifu_broadaddr;
++        
++        if (sa->sin_addr.s_addr == addr)
++          return true;
++      }
++    }
++  }
++
++  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
++  {
++    if (ifa->ifa_addr == NULL)
++      continue;
++
++    if (!strcmp(ifname, ifa->ifa_name))
++    {
++      if (ifa->ifa_addr->sa_family == AF_INET)
++      {
++        sa = (struct sockaddr_in *) ifa->ifa_netmask;
++        netmask = sa->sin_addr.s_addr;
++        
++        sa = (struct sockaddr_in *) ifa->ifa_addr;
++
++        if ((netmask & sa->sin_addr.s_addr) == (netmask & addr))
++        {
++          if (((~netmask) & addr) == (~netmask))
++            return true;
++        }
++      }
++    }
++  }
++
++  return false;
++}
++
++#endif

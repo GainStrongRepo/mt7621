@@ -1,0 +1,7 @@
+Index: linux-3.10.108/include/uapi/linux/autoconf.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-3.10.108/include/uapi/linux/autoconf.h	2018-04-20 14:27:53.796096000 +0800
+@@ -0,0 +1,2 @@
++/* lsdk insists on exporting autoconf.h */
++

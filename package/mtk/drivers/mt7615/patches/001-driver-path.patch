@@ -1,0 +1,41 @@
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig	2019-03-08 16:15:57.000000000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig	2019-03-08 16:21:14.921228000 +0800
+@@ -488,11 +488,11 @@
+     endchoice
+ 
+     if WIFI_MODE_AP || WIFI_MODE_BOTH
+-		source "drivers/net/wireless/mtk/mt7615e/mt_wifi_ap/Kconfig"
++		source "drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Kconfig"
+     endif
+ 
+     if WIFI_MODE_STA || WIFI_MODE_BOTH
+-		source "drivers/net/wireless/mtk/mt7615e/mt_wifi_sta/Kconfig"
++		source "drivers/net/wireless/mtk/mt7615/mt_wifi_sta/Kconfig"
+     endif
+ endmenu	
+ 
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile	2019-03-08 16:16:51.354196000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile	2019-03-08 16:21:53.336539000 +0800
+@@ -4,7 +4,7 @@
+ ifeq ($(CONFIG_DEFAULTS_KERNEL_4_4),y)
+ WIFI_DRV_PATH = drivers/net/wireless/mediatek
+ else
+-WIFI_DRV_PATH = drivers/net/wireless/mtk/mt7615e
++WIFI_DRV_PATH = drivers/net/wireless/mtk/mt7615
+ endif
+ endif
+ 
+@@ -1374,7 +1374,9 @@
+ EXTRA_CFLAGS += -Inet/nat
+ #EXTRA_CFLAGS += -DDBG_STARVATION
+ ifeq ($(CONFIG_SUPPORT_OPENWRT),y)
++ifeq ($(CONFIG_MT_WIFI),m)
+ EXTRA_CFLAGS += -DMT_WIFI_MODULE
++endif
+ else
+ ifeq ($(CONFIG_MT_WIFI),m)
+ EXTRA_CFLAGS += -DMT_WIFI_MODULE

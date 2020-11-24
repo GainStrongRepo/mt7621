@@ -1,0 +1,83 @@
+Index: linux-3.10.108/drivers/net/wireless/mtk/Kconfig
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/Kconfig
++++ linux-3.10.108/drivers/net/wireless/mtk/Kconfig
+@@ -2,28 +2,28 @@ menuconfig WIFI_MT7603E
+     bool "MT7603E WiFi"
+     default n
+ if WIFI_MT7603E
+-    source "drivers/net/wireless/mtk/mt7603e/mt7603_wifi/Kconfig"
++    source "drivers/net/wireless/mtk/mt7603/mt7603_wifi/Kconfig"
+ endif
+ 
+ menuconfig WIFI_MT7610E
+     bool "MT7610E WiFi"
+     default n
+ if WIFI_MT7610E
+-    source "drivers/net/wireless/mtk/mt7610e/mt7610_wifi/Kconfig"
++    source "drivers/net/wireless/mtk/mt7610/mt7610_wifi/Kconfig"
+ endif
+ 
+ menuconfig WIFI_MT7615E
+     bool "MT7615E WiFi"
+     default n
+ if WIFI_MT7615E
+-    source "drivers/net/wireless/mtk/mt7615e/mt_wifi/embedded/Kconfig"
++    source "drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig"
+ endif
+ 
+ menuconfig WIFI_MT7663E
+     bool "MT7663E WiFi"
+     default n
+ if WIFI_MT7663E
+-    source "drivers/net/wireless/mtk/mt7663e/mt_wifi/embedded/Kconfig"
++    source "drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/Kconfig"
+ endif
+ 
+ menuconfig WIFI_MT7620
+@@ -44,7 +44,7 @@ menuconfig WIFI_MT76X2E
+     bool "MT76X2E WiFi"
+     default n
+ if WIFI_MT76X2E
+-    source "drivers/net/wireless/mtk/mt76x2e/mt76x2_wifi/Kconfig"
++    source "drivers/net/wireless/mtk/mt76x2/mt76x2_wifi/Kconfig"
+ endif
+ 
+ source "drivers/net/wireless/mtk/mapfilter/Kconfig"
+Index: linux-3.10.108/drivers/net/wireless/mtk/Makefile
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/Makefile
++++ linux-3.10.108/drivers/net/wireless/mtk/Makefile
+@@ -1,19 +1,19 @@
+ obj-y += dummy.o
+ 
+ ifneq ($(CONFIG_WIFI_MT7610E),)
+-obj-$(CONFIG_WIFI_MT7610E) += mt7610e/mt7610_wifi/
++obj-$(CONFIG_WIFI_MT7610E) += mt7610/mt7610_wifi/
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT76X2E),)
+-obj-$(CONFIG_WIFI_MT76X2E) += mt76x2e/mt76x2_wifi_ap/
++obj-$(CONFIG_WIFI_MT76X2E) += mt76x2/mt76x2_wifi_ap/
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT7615E),)
+-obj-$(CONFIG_WIFI_MT7615E) += mt7615e/mt_wifi_ap/
++obj-$(CONFIG_WIFI_MT7615E) += mt7615/mt_wifi_ap/
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT7663E),)
+-obj-$(CONFIG_WIFI_MT7663E) += mt7663e/mt_wifi_ap/
++obj-$(CONFIG_WIFI_MT7663E) += mt7663/mt_wifi_ap/
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT7620),)
+@@ -21,7 +21,7 @@ obj-$(CONFIG_WIFI_MT7620) += mt7620/mt76
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT7603E),)
+-obj-$(CONFIG_WIFI_MT7603E) += mt7603e/mt7603_wifi_ap/
++obj-$(CONFIG_WIFI_MT7603E) += mt7603/mt7603_wifi_ap/
+ endif
+ 
+ ifneq ($(CONFIG_WIFI_MT7628),)

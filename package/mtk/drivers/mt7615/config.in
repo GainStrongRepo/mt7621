@@ -1,0 +1,89 @@
+choice
+	prompt "mt7615 build type"
+	depends on PACKAGE_kmod-mt7615
+	default MT7615E_BUILD_KO
+config  MT7615E_BUILD_KO
+	bool "build as module (mt7615.ko)"
+	select PACKAGE_kmod-mt7615-ko
+config  MT7615E_BUILD_IN
+	bool "build into kernel"
+	select PACKAGE_kmod-mt7615-in
+endchoice
+
+
+# entries start with "KCONFIG" will be applied to kernel.
+config  KCONFIG_WIFI_MT7615E
+    bool
+    default n
+
+# ---------------- 1st card ----------------
+menuconfig KCONFIG_FIRST_IF_MT7615E
+    bool "mt7615 as 1st card"
+    select KCONFIG_WIFI_MT7615E
+    default n
+choice
+    prompt "mt7615 DBDC multi-porfile"
+    depends on KCONFIG_FIRST_IF_MT7615E
+    default FIRST_MT7615E_NORMAL
+config FIRST_MT7615E_NORMAL
+    bool "Single-Band, Single-profile"
+config FIRST_MT7615E_DBDC
+    bool "Dual-Band,  Dual-porfile"
+endchoice
+
+config  KCONFIG_RT_FIRST_CARD
+    string
+    depends on KCONFIG_FIRST_IF_MT7615E
+    default "7615e"
+config  KCONFIG_RT_FIRST_IF_RF_OFFSET
+	hex
+    depends on KCONFIG_FIRST_IF_MT7615E
+	default 0x0
+
+# ---------------- 2nd card ----------------
+menuconfig KCONFIG_SECOND_IF_MT7615E
+    bool "mt7615 as 2nd card"
+    select KCONFIG_WIFI_MT7615E
+    default n
+choice
+    prompt "mt7615 band mode"
+    depends on KCONFIG_SECOND_IF_MT7615E
+    default SECOND_MT7615E_NORMAL
+config SECOND_MT7615E_NORMAL
+    bool "Single-Band, Single-profile"
+config SECOND_MT7615E_DBDC
+    bool "Dual-Band,  Dual-porfile"
+endchoice
+
+config  KCONFIG_RT_SECOND_CARD
+	string
+	depends on KCONFIG_SECOND_IF_MT7615E
+	default "7615e"
+config  KCONFIG_RT_SECOND_IF_RF_OFFSET
+	hex
+    depends on KCONFIG_SECOND_IF_MT7615E
+	default 0x8000
+
+# ---------------- 3rd card ----------------
+menuconfig KCONFIG_THIRD_IF_MT7615E
+    bool "mt7615 as 3rd card"
+    select KCONFIG_WIFI_MT7615E
+    default n
+choice
+    prompt "mt7615 band mode"
+    depends on KCONFIG_THIRD_IF_MT7615E
+    default THIRD_MT7615E_NORMAL
+config THIRD_MT7615E_NORMAL
+    bool "Single-Band, Single-profile"
+config THIRD_MT7615E_DBDC
+    bool "Dual-Band,  Dual-porfile"
+endchoice
+
+config  KCONFIG_RT_THIRD_CARD
+	string
+	depends on KCONFIG_THIRD_IF_MT7615E
+	default "7615e"
+config  KCONFIG_RT_THIRD_IF_RF_OFFSET
+	hex
+    depends on KCONFIG_THIRD_IF_MT7615E
+	default 0x4000

@@ -1,0 +1,21 @@
+# ----------------------------------------------------------------------
+# NOTE: the following configs has nothing to do with l1profile.
+# ----------------------------------------------------------------------
+
+
+#   In kernel Kconfig, FIRST_IF_NONE/SECOND_IF_NONE/THIRD_IF_NONE are all
+#   bool. We define them as string here. Then any value passed to Kconfig
+#   will be taken as "false", thus we can overwrite the value in kernel.
+#       -- Hua Shao
+
+config KCONFIG_FIRST_IF_NONE
+	string
+    default n if  first_card
+
+config KCONFIG_SECOND_IF_NONE
+	string
+    default n if  second_card
+
+config KCONFIG_THIRD_IF_NONE
+	string
+    default n if  third_card

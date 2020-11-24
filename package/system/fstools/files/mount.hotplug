@@ -1,0 +1,6 @@
+/sbin/block hotplug
+if [ -x /usr/bin/ntfs-3g ];then
+    mkdir -p /mnt/$DEVICENAME
+    /usr/bin/ntfs-3g /dev/$DEVICENAME /mnt/$DEVICENAME
+fi
+

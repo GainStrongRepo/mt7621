@@ -1,0 +1,24 @@
+Index: libiwinfo-2015-06-01/iwinfo_wext.c
+===================================================================
+--- libiwinfo-2015-06-01.orig/iwinfo_wext.c
++++ libiwinfo-2015-06-01/iwinfo_wext.c
+@@ -120,7 +120,19 @@ static int wext_get_ssid(const char *ifn
+ static int wext_get_bssid(const char *ifname, char *buf)
+ {
+ 	struct iwreq wrq;
++	char cmd[256];
++	FILE *fp = NULL;
+ 
++	memset(cmd, 0, sizeof(cmd));
++	sprintf(cmd, "ifconfig %s | grep HWaddr | awk -F \"HWaddr \" \'{print $2}\'", ifname);
++	fp = popen(cmd, "r");
++	fscanf(fp, "%s", buf);
++	pclose(fp);
++
++	if (strlen(buf) >16)
++		return 0;
++
++	memset(cmd, 0, sizeof(cmd));
+ 	if(wext_ioctl(ifname, SIOCGIWAP, &wrq) >= 0)
+ 	{
+ 		sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",

@@ -1,0 +1,105 @@
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/Kconfig
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/Kconfig	2018-11-06 15:52:38.335244000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/Kconfig	2018-11-06 16:03:50.514744000 +0800
+@@ -510,12 +510,12 @@
+     endchoice
+ 
+     if WIFI_MODE_AP || WIFI_MODE_BOTH
+-		source "drivers/net/wireless/mtk/mt7663e/mt_wifi_ap/Kconfig"
++		source "drivers/net/wireless/mtk/mt7663/mt_wifi_ap/Kconfig"
+     endif
+ 
+-    if WIFI_MODE_STA || WIFI_MODE_BOTH
+-		source "drivers/net/wireless/mtk/mt7663e/mt_wifi_sta/Kconfig"
+-    endif
++#    if WIFI_MODE_STA || WIFI_MODE_BOTH
++#		source "drivers/net/wireless/mtk/mt7663/mt_wifi_sta/Kconfig"
++#    endif
+ endmenu	
+ 
+ endif
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/include/l1profile.h
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/include/l1profile.h	2018-11-06 15:52:38.335244000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/embedded/include/l1profile.h	2018-11-06 15:52:38.292211000 +0800
+@@ -66,7 +66,7 @@
+ INDEX4_single_sku_path=/etc_ro/Wireless/RT2860AP/SingleSKU.dat\n\
+ INDEX4_bf_sku_path=/etc_ro/Wireless/RT2860AP/SingleSKU_BF.dat\n\
+ INDEX5=MT7663\n\
+-INDEX5_profile_path=/etc/wireless/mt7663e/mt7663e.1.dat\n\
++INDEX5_profile_path=/etc/wireless/mt7663/mt7663.1.dat\n\
+ INDEX5_EEPROM_offset=0x0\n\
+ INDEX5_EEPROM_size=0x4000\n\
+ INDEX5_EEPROM_name=e2p\n\
+@@ -79,7 +79,7 @@
+ INDEX5_single_sku_path=/etc_ro/Wireless/RT2860AP/SingleSKU.dat\n\
+ INDEX5_bf_sku_path=/etc_ro/Wireless/RT2860AP/SingleSKU_BF.dat\n\
+ INDEX6=MT7663\n\
+-INDEX6_profile_path=/etc/wireless/mt7663e/mt7663e.2.dat\n\
++INDEX6_profile_path=/etc/wireless/mt7663/mt7663.2.dat\n\
+ INDEX6_EEPROM_offset=0x8000\n\
+ INDEX6_EEPROM_size=0x4000\n\
+ INDEX6_EEPROM_name=e2p\n\
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/os/linux/rt_profile.c
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7663/mt_wifi/os/linux/rt_profile.c	2018-11-06 15:52:38.335244000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi/os/linux/rt_profile.c	2018-11-06 16:05:41.980527000 +0800
+@@ -101,20 +101,20 @@
+ #define def_to_str(s)    #s
+ 
+ #if defined(CONFIG_SUPPORT_OPENWRT) && defined(MT7663)
+-#define FIRST_EEPROM_FILE_PATH		"/etc/wireless/mt7663e/"
+-#define FIRST_AP_PROFILE_PATH		"/etc/wireless/mt7663e/mt7663e.1.dat"
++#define FIRST_EEPROM_FILE_PATH		"/etc/wireless/mt7663/"
++#define FIRST_AP_PROFILE_PATH		"/etc/wireless/mt7663/mt7663.1.dat"
+ #define FIRST_STA_PROFILE_PATH		"/etc/wireless/RT2860/RT2860.dat"
+ 
+ #define FIRST_CHIP_ID	xdef_to_str(CONFIG_RT_FIRST_CARD)
+ 
+-#define SECOND_EEPROM_FILE_PATH		"/etc/wireless/mt7663e/"
+-#define SECOND_AP_PROFILE_PATH		"/etc/wireless/mt7663e/mt7663e.2.dat"
++#define SECOND_EEPROM_FILE_PATH		"/etc/wireless/mt7663/"
++#define SECOND_AP_PROFILE_PATH		"/etc/wireless/mt7663/mt7663.2.dat"
+ #define SECOND_STA_PROFILE_PATH		"/etc/wireless/iNIC/iNIC_sta.dat"
+ 
+ #define SECOND_CHIP_ID	xdef_to_str(CONFIG_RT_SECOND_CARD)
+ 
+-#define THIRD_EEPROM_FILE_PATH		"/etc/wireless/mt7663e/"
+-#define THIRD_AP_PROFILE_PATH		"/etc/wireless/mt7663e/mt7663e.3.dat"
++#define THIRD_EEPROM_FILE_PATH		"/etc/wireless/mt7663/"
++#define THIRD_AP_PROFILE_PATH		"/etc/wireless/mt7663/mt7663.3.dat"
+ #define THIRD_STA_PROFILE_PATH		"/etc/wireless/WIFI3/RT2870AP.dat"
+ 
+ #define THIRD_CHIP_ID	xdef_to_str(CONFIG_RT_THIRD_CARD)
+@@ -2111,7 +2111,7 @@
+ 		if (RtPrivIoctlSetVal() == pConfig->CmdId_RTPRIV_IOCTL_SET) {
+ 			if (TRUE
+ #ifdef CONFIG_APSTA_MIXED_SUPPORT
+-				&& ((pConfig->cmd_data_len <= (strlen("OpMode") + 1))
++				&& ((pConfig->cmd_data_len == (strlen("OpMode") + 1))
+ 					&& (strstr(pConfig->pCmdData, "OpMode") == NULL))
+ #endif /* CONFIG_APSTA_MIXED_SUPPORT */
+ #ifdef SINGLE_SKU
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi_ap/Makefile
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7663/mt_wifi_ap/Makefile	2018-11-06 15:52:38.335244000 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7663/mt_wifi_ap/Makefile	2018-11-06 15:52:38.321262000 +0800
+@@ -4,7 +4,7 @@
+ ifeq ($(CONFIG_DEFAULTS_KERNEL_4_4),y)
+ WIFI_DRV_PATH = drivers/net/wireless/mediatek
+ else
+-WIFI_DRV_PATH = drivers/net/wireless/mtk/mt7663e
++WIFI_DRV_PATH = drivers/net/wireless/mtk/mt7663
+ endif
+ endif
+ 
+@@ -15,7 +15,7 @@
+ 
+ ifeq ($(CONFIG_SUPPORT_OPENWRT),y)
+ ifeq ($(CONFIG_CHIP_MT7663E),y)
+-DRV_NAME = mt7663e
++DRV_NAME = mt7663
+ else
+ DRV_NAME = mt_wifi
+ endif

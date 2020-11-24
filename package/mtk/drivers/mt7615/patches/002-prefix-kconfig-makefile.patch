@@ -1,0 +1,2140 @@
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig	2019-04-10 21:22:40.569116376 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi/embedded/Kconfig	2019-04-10 21:35:30.839658657 +0800
+@@ -1,41 +1,41 @@
+-config MT_WIFI
++config MT7615E_MT_WIFI
+ 	tristate "MT WIFI Driver"
+-	select WIFI_BASIC_FUNC if MT_WIFI
++	select MT7615E_WIFI_BASIC_FUNC if MT7615E_MT_WIFI
+ 
+-config MT_WIFI_PATH
++config MT7615E_MT_WIFI_PATH
+ 		string
+-		depends on MT_WIFI
++		depends on MT7615E_MT_WIFI
+ 		default "mt_wifi"
+ 
+-if MT_WIFI
++if MT7615E_MT_WIFI
+ menu "WiFi Generic Feature Options"
+ choice
+ 		prompt "EEPROM Type of 1st Card"
+ 		depends on ! FIRST_IF_NONE
+ 
+-		config FIRST_IF_EEPROM_FLASH
++		config MT7615E_FIRST_IF_EEPROM_FLASH
+ 		bool "FLASH"
+ 
+-		config FIRST_IF_EEPROM_EFUSE
++		config MT7615E_FIRST_IF_EEPROM_EFUSE
+ 		bool "EFUSE"
+ endchoice
+ 
+ config RT_FIRST_CARD_EEPROM
+ 		string
+ 		depends on ! FIRST_IF_NONE
+-		default "flash" if FIRST_IF_EEPROM_FLASH
++		default "flash" if MT7615E_FIRST_IF_EEPROM_FLASH
+ 
+ choice
+ 		prompt "EEPROM Type of 2nd Card"
+ 		depends on ! SECOND_IF_NONE
+ 
+-		config SECOND_IF_EEPROM_FLASH
++		config MT7615E_SECOND_IF_EEPROM_FLASH
+ 		bool "FLASH"
+ 
+-		config SECOND_IF_EEPROM_PROM
++		config MT7615E_SECOND_IF_EEPROM_PROM
+ 		bool "EEPROM"
+ 
+-		config SECOND_IF_EEPROM_EFUSE
++		config MT7615E_SECOND_IF_EEPROM_EFUSE
+ 		bool "EFUSE"
+ 
+ endchoice
+@@ -43,21 +43,21 @@
+ config RT_SECOND_CARD_EEPROM
+ 		string
+ 		depends on ! SECOND_IF_NONE
+-		default "prom" if SECOND_IF_EEPROM_PROM
+-		default "efuse" if SECOND_IF_EEPROM_EFUSE
+-		default "flash" if SECOND_IF_EEPROM_FLASH
++		default "prom" if MT7615E_SECOND_IF_EEPROM_PROM
++		default "efuse" if MT7615E_SECOND_IF_EEPROM_EFUSE
++		default "flash" if MT7615E_SECOND_IF_EEPROM_FLASH
+ 
+ choice
+ 		prompt "EEPROM Type of 3th Card"
+ 		depends on ! THIRD_IF_NONE
+ 
+-		config THIRD_IF_EEPROM_FLASH
++		config MT7615E_THIRD_IF_EEPROM_FLASH
+ 		bool "FLASH"
+ 
+-		config THIRD_IF_EEPROM_PROM
++		config MT7615E_THIRD_IF_EEPROM_PROM
+ 		bool "EEPROM"
+ 
+-		config THIRD_IF_EEPROM_EFUSE
++		config MT7615E_THIRD_IF_EEPROM_EFUSE
+ 		bool "EFUSE"
+ 
+ endchoice
+@@ -65,323 +65,323 @@
+ config RT_THIRD_CARD_EEPROM
+ 		string
+ 		depends on ! THIRD_IF_NONE
+-		default "prom" if THIRD_IF_EEPROM_PROM
+-		default "efuse" if THIRD_IF_EEPROM_EFUSE
+-		default "flash" if THIRD_IF_EEPROM_FLASH
++		default "prom" if MT7615E_THIRD_IF_EEPROM_PROM
++		default "efuse" if MT7615E_THIRD_IF_EEPROM_EFUSE
++		default "flash" if MT7615E_THIRD_IF_EEPROM_FLASH
+ 	
+-config MULTI_INF_SUPPORT
++config MT7615E_MULTI_INF_SUPPORT
+ 		bool
+ 		default y if !FIRST_IF_NONE && !SECOND_IF_NONE
+ 		
+-config WIFI_BASIC_FUNC
++config MT7615E_WIFI_BASIC_FUNC
+ 	bool "Basic Functions"
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
+ 
+-config DOT11_N_SUPPORT
++config MT7615E_DOT11_N_SUPPORT
+ 	bool "802.11n support"
+ 	default y
+ 
+-config DOT11_VHT_AC
++config MT7615E_DOT11_VHT_AC
+ 	bool "802.11AC support"
+ 	depends on WIFI_DRIVER
+-	depends on DOT11_N_SUPPORT
++	depends on MT7615E_DOT11_N_SUPPORT
+ 	default y
+ 
+-config G_BAND_256QAM_SUPPORT
++config MT7615E_G_BAND_256QAM_SUPPORT
+     bool "2.4G 256QAM support"
+ 	depends on WIFI_DRIVER
+-    depends on DOT11_VHT_AC
++    depends on MT7615E_DOT11_VHT_AC
+ 	default y
+ 
+-config TPC_SUPPORT
++config MT7615E_TPC_SUPPORT
+ 	bool "802.11h TPC Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 
+-config TXRX_STAT_SUPPORT
++config MT7615E_TXRX_STAT_SUPPORT
+ 	bool "TxRx Stats Support"
+ 	depends on WIFI_DRIVER
+ 	default n
+ 
+-config ICAP_SUPPORT
++config MT7615E_ICAP_SUPPORT
+ 	bool "ICAP Support"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config SPECTRUM_SUPPORT
++config MT7615E_SPECTRUM_SUPPORT
+ 	bool "Wifi Spectrum Support"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config BACKGROUND_SCAN_SUPPORT
++config MT7615E_BACKGROUND_SCAN_SUPPORT
+ 	bool "Background Scan Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 	
+-config SMART_CARRIER_SENSE_SUPPORT
++config MT7615E_SMART_CARRIER_SENSE_SUPPORT
+ 	bool "Smart Carrier Sense Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 	
+-config MT_DFS_SUPPORT
++config MT7615E_MT_DFS_SUPPORT
+         bool "Dynamic Frequency Selection Support"	
+         depends on WIFI_DRIVER
+         default y
+-config MTK_OFFCHANNEL_SCAN_FEATURE
++config MT7615E_OFFCHANNEL_SCAN_FEATURE
+ 	bool "Channel Quality Monitor"
+-	depends on MTK_WIFI_DRIVER
+-	depends on MTK_MT_AP_SUPPORT
++	depends on MT7615E_WIFI_DRIVER
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+-#config WFA_VHT_R2_PF
++#config MT7615E_WFA_VHT_R2_PF
+ #    bool "WFA VHT R2 Plugfest"
+-#    depends on DOT11_VHT_AC
++#    depends on MT7615E_DOT11_VHT_AC
+ #    default n
+ 
+-config HDR_TRANS_TX_SUPPORT
++config MT7615E_HDR_TRANS_TX_SUPPORT
+     bool "Tx Header Translation"
+-    depends on CHIP_MT7615E || CHIP_MT7622 || CHIP_MT7663E
++    depends on MT7615E_CHIP_MT7615E || MT7615E_CHIP_MT7622 || MT7615E_CHIP_MT7663E
+     default y
+ 
+-config HDR_TRANS_RX_SUPPORT
++config MT7615E_HDR_TRANS_RX_SUPPORT
+     bool "Rx Header Translation"
+-    depends on CHIP_MT7615E || CHIP_MT7622 || CHIP_MT7663E
++    depends on MT7615E_CHIP_MT7615E || MT7615E_CHIP_MT7622 || MT7615E_CHIP_MT7663E
+     default y
+ 
+-config DBDC_MODE
++config MT7615E_DBDC_MODE
+ 	bool "dbdc mode support"
+-	depends on CHIP_MT7615E
+-	select MULTI_PROFILE_SUPPORT
+-#	select DEFAULT_5G_PROFILE
++	depends on MT7615E_CHIP_MT7615E
++	select MT7615E_MULTI_PROFILE_SUPPORT
++#	select MT7615E_DEFAULT_5G_PROFILE
+ 	default y
+ 
+-config MULTI_PROFILE_SUPPORT
++config MT7615E_MULTI_PROFILE_SUPPORT
+     bool "Multi Profile Support"
+-    depends on DBDC_MODE
++    depends on MT7615E_DBDC_MODE
+ 	default y
+ 
+-config DEFAULT_5G_PROFILE
++config MT7615E_DEFAULT_5G_PROFILE
+ 	bool "5G default profile for DBDC"
+-	depends on DBDC_MODE
++	depends on MT7615E_DBDC_MODE
+ 	default n
+ 
+-config WSC_INCLUDED
++config MT7615E_WSC_INCLUDED
+ 	bool "WSC (WiFi Simple Config)"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ 	default y
+ 
+-config WSC_V2_SUPPORT
++config MT7615E_WSC_V2_SUPPORT
+ 	bool "WSC V2(WiFi Simple Config Version 2.0)"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ 	default y
+ 
+-config DOT11W_PMF_SUPPORT
++config MT7615E_DOT11W_PMF_SUPPORT
+ 	bool "PMF"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ 	default y
+ 
+-config TXBF_SUPPORT
++config MT7615E_TXBF_SUPPORT
+         bool "Tx Bean Forming Support"
+         depends on WIFI_DRIVER
+         default y
+ 
+-config FAST_NAT_SUPPORT
++config MT7615E_FAST_NAT_SUPPORT
+        bool "Fast-NAT support"
+        depends on RA_HW_NAT_WIFI
+        default n
+ 
+-config WHNAT_SUPPORT
++config MT7615E_WHNAT_SUPPORT
+ 	tristate "Wifi Hardware NAT support"
+-	depends on CHIP_MT7615E
+-	depends on WLAN_HOOK
+-	depends on FAST_NAT_SUPPORT
++	depends on MT7615E_CHIP_MT7615E
++	depends on MT7615E_WLAN_HOOK
++	depends on MT7615E_FAST_NAT_SUPPORT
+ 	default n
+ 
+-#config LLTD_SUPPORT
++#config MT7615E_LLTD_SUPPORT
+ #	bool "LLTD (Link Layer Topology Discovery Protocol)"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-#config QOS_DLS_SUPPORT
++#config MT7615E_QOS_DLS_SUPPORT
+ #	bool "802.11e DLS ((Direct-Link Setup) Support"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-#config WAPI_SUPPORT
++#config MT7615E_WAPI_SUPPORT
+ #	bool "WAPI Support"
+ #	depends on WIFI_DRIVER
+ #	default n
+ 
+-config FTM_SUPPORT
++config MT7615E_FTM_SUPPORT
+ 	bool "FTM Support"
+ 	depends on WIFI_DRIVER
+-	select PASSPOINT_R2
++	select MT7615E_PASSPOINT_R2
+ 	default n
+ 
+-config MBO_SUPPORT
++config MT7615E_MBO_SUPPORT
+ 	bool "MBO Support"
+ 	depends on WIFI_DRIVER
+-	select INTERWORKING
+-	select WNM_SUPPORT
+-	select DOT11K_RRM_SUPPORT
+-	select DOT11R_FT_SUPPORT
+-	select DOT11W_PMF_SUPPORT
++	select MT7615E_INTERWORKING
++	select MT7615E_WNM_SUPPORT
++	select MT7615E_DOT11K_RRM_SUPPORT
++	select MT7615E_DOT11R_FT_SUPPORT
++	select MT7615E_DOT11W_PMF_SUPPORT
+ 	default n
+ 
+-#config CARRIER_DETECTION_SUPPORT
++#config MT7615E_CARRIER_DETECTION_SUPPORT
+ #	bool "Carrier Detect"
+ #	depends on WIFI_DRIVER
+ #	default n
+ 
+-config IGMP_SNOOP_SUPPORT
++config MT7615E_IGMP_SNOOP_SUPPORT
+ 	bool "IGMP snooping"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-#config BLOCK_NET_IF
++#config MT7615E_BLOCK_NET_IF
+ #	bool "NETIF Block"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ #	help
+ #	Support Net interface block while Tx-Sw queue full
+ 
+-#config RATE_ADAPTION
++#config MT7615E_RATE_ADAPTION
+ #	bool "New Rate Adaptation support"
+ #	depends on WIFI_DRIVER
+ #	default y
+ 
+-#config NEW_RATE_ADAPT_SUPPORT
++#config MT7615E_NEW_RATE_ADAPT_SUPPORT
+ #	bool "Intelligent Rate Adaption"
+-#	depends on WIFI_DRIVER && RATE_ADAPTION
++#	depends on WIFI_DRIVER && MT7615E_RATE_ADAPTION
+ #	default y
+ 
+-#config AGS_SUPPORT
++#config MT7615E_AGS_SUPPORT
+ #	bool "Adaptive Group Switching"
+-#	depends on WIFI_DRIVER && RATE_ADAPTION
+-#	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++#	depends on WIFI_DRIVER && MT7615E_RATE_ADAPTION
++#	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ #	default n
+ 
+-#config RATE_ADAPT_AGBS_SUPPORT
++#config MT7615E_RATE_ADAPT_AGBS_SUPPORT
+ #	bool "Adaptive AGBS Mode"
+-#	depends on WIFI_DRIVER && RATE_ADAPTION
+-#	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++#	depends on WIFI_DRIVER && MT7615E_RATE_ADAPTION
++#	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ #	default y
+ 
+-#config IDS_SUPPORT
++#config MT7615E_IDS_SUPPORT
+ #	bool "IDS (Intrusion Detection System) Support"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-#config WIFI_WORK_QUEUE
++#config MT7615E_WIFI_WORK_QUEUE
+ #	bool "Work Queue"
+ #	depends on WIFI_DRIVER
+ #	default n
+ 
+-#config WIFI_SKB_RECYCLE
++#config MT7615E_WIFI_SKB_RECYCLE
+ #	bool "SKB Recycle(Linux)"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-config RTMP_FLASH_SUPPORT
++config MT7615E_RTMP_FLASH_SUPPORT
+ 	bool "Flash Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 
+-config PRE_CAL_TRX_SET1_SUPPORT
++config MT7615E_PRE_CAL_TRX_SET1_SUPPORT
+     bool "Calibration To Flash/BinFile Support"
+     depends on WIFI_DRIVER
+     default y
+ 
+-config RLM_CAL_CACHE_SUPPORT
++config MT7615E_RLM_CAL_CACHE_SUPPORT
+ 	bool "RlmCalibrationCache Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 
+-config PRE_CAL_TRX_SET2_SUPPORT
++config MT7615E_PRE_CAL_TRX_SET2_SUPPORT
+     bool "Pre-calibration to Flash Support"
+     depends on WIFI_DRIVER
+     default y
+ 
+-config CAL_BIN_FILE_SUPPORT
++config MT7615E_CAL_BIN_FILE_SUPPORT
+ 	bool "Calibration to BinFile Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 
+-config RF_LOCKDOWN_SUPPORT
++config MT7615E_RF_LOCKDOWN_SUPPORT
+ 	bool "RF Lockdown Support"
+ 	depends on WIFI_DRIVER
+ 	default n	
+ 
+-config LINK_TEST_SUPPORT
++config MT7615E_LINK_TEST_SUPPORT
+ 	bool "Link Test Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 	
+-config WIFI_EAP_FEATURE
++config MT7615E_WIFI_EAP_FEATURE
+ 	bool "EAP Feature Support"
+ 	depends on WIFI_DRIVER
+ 	default y
+ 
+-#config LED_CONTROL_SUPPORT
++#config MT7615E_LED_CONTROL_SUPPORT
+ #	bool "LED Support"
+ #	depends on WIFI_DRIVER
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-config ATE_SUPPORT
++config MT7615E_ATE_SUPPORT
+ 	bool "ATE/QA Support"
+ 	depends on WIFI_DRIVER
+ 	default y	
+ 
+-#config MEMORY_OPTIMIZATION
++#config MT7615E_MEMORY_OPTIMIZATION
+ #	bool "Memory Optimization"
+ #	depends on WIFI_DRIVER
+ #	default n
+ 
+-config PASSPOINT_R2
++config MT7615E_PASSPOINT_R2
+ 	bool "Passpoint Release-2 Support"
+ 	depends on WIFI_DRIVER
+-	select DOT11W_PMF_SUPPORT
+-	depends on MT_AP_SUPPORT
++	select MT7615E_DOT11W_PMF_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-#config TRACE_TCP_PKT
++#config MT7615E_TRACE_TCP_PKT
+ #       bool "TCP DATA/ACK packets trace log"
+ #       depends on WIFI_DRIVER
+ #       default n
+ 
+-config UAPSD
++config MT7615E_UAPSD
+ 	bool "UAPSD support"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+ 	default y
+ 
+-config TCP_RACK_SUPPORT
++config MT7615E_TCP_RACK_SUPPORT
+ 	bool "TCP Reduced ACK  support"
+ 	depends on WIFI_DRIVER
+ 	default n
+ 
+ #### PA_LNA_Type choice
+ 
+-config RED_SUPPORT
++config MT7615E_RED_SUPPORT
+         bool "RED(Random Early Drop) support"
+ 	depends on WIFI_DRIVER
+-	depends on MT_AP_SUPPORT || MT_STA_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT || MT7615E_MT_STA_SUPPORT
+         default y
+ 
+-config FDB_SUPPORT
++config MT7615E_FDB_SUPPORT
+        bool "FW Debug Port"
+        depends on WIFI_DRIVER
+        default n
+@@ -390,39 +390,39 @@
+         prompt "PA LNA Type of 1st Card"
+ 		depends on ! FIRST_IF_NONE
+ 		
+-		config FIRST_IF_EPAELNA
++		config MT7615E_FIRST_IF_EPAELNA
+ 		bool "ePAeLNA"
+-		config FIRST_IF_IPAILNA
++		config MT7615E_FIRST_IF_IPAILNA
+ 		bool "iPAiLNA"		
+-		config FIRST_IF_IPAELNA
++		config MT7615E_FIRST_IF_IPAELNA
+ 		bool "iPAeLNA"
+-#		config FIRST_IF_EPAILNA
++#		config MT7615E_FIRST_IF_EPAILNA
+ #		bool "ePAiLNA"
+ endchoice
+ choice
+         prompt "PA LNA Type of 2nd Card"
+ 		depends on ! SECOND_IF_NONE
+ 		
+-		config SECOND_IF_EPAELNA
++		config MT7615E_SECOND_IF_EPAELNA
+ 		bool "ePAeLNA"
+-		config SECOND_IF_IPAILNA
++		config MT7615E_SECOND_IF_IPAILNA
+ 		bool "iPAiLNA"		
+-		config SECOND_IF_IPAELNA
++		config MT7615E_SECOND_IF_IPAELNA
+ 		bool "iPAeLNA"
+-#		config SECOND_IF_EPAILNA
++#		config MT7615E_SECOND_IF_EPAILNA
+ #		bool "ePAiLNA"
+ endchoice
+ choice
+         prompt "PA LNA Type of 3rd Card"
+ 		depends on ! THIRD_IF_NONE
+ 		
+-		config THIRD_IF_EPAELNA
++		config MT7615E_THIRD_IF_EPAELNA
+ 		bool "ePAeLNA"
+-		config THIRD_IF_IPAILNA
++		config MT7615E_THIRD_IF_IPAILNA
+ 		bool "iPAiLNA"		
+-		config THIRD_IF_IPAELNA
++		config MT7615E_THIRD_IF_IPAELNA
+ 		bool "iPAeLNA"
+-#		config THIRD_IF_EPAILNA
++#		config MT7615E_THIRD_IF_EPAILNA
+ #		bool "ePAiLNA"
+ endchoice
+ #### PA_LNA_Type choice END 
+@@ -431,39 +431,39 @@
+ # Section for chip architectures
+ #
+ # "RLT MAC Support"
+-config RLT_MAC
++config MT7615E_RLT_MAC
+ 	bool
+ 	depends on WIFI_DRIVER
+ 	default n
+ 
+-config RLT_BBP
++config MT7615E_RLT_BBP
+ 	bool
+ 
+-config RLT_RF
++config MT7615E_RLT_RF
+ 	bool
+ 
+ # "RTMP MAC Support"
+-config RTMP_MAC
++config MT7615E_RTMP_MAC
+ 	bool
+ 	depends on WIFI_DRIVER
+ 	default n
+ 
+-config RTMP_BBP
++config MT7615E_RTMP_BBP
+     	bool
+ 
+-config RTMP_RF
++config MT7615E_RTMP_RF
+     	bool
+ 
+ #
+ # Section for interfaces
+ #
+-config RTMP_PCI_SUPPORT
++config MT7615E_RTMP_PCI_SUPPORT
+     	bool
+ 
+-config RTMP_USB_SUPPORT
++config MT7615E_RTMP_USB_SUPPORT
+ 		bool
+ 
+-config RTMP_RBUS_SUPPORT
++config MT7615E_RTMP_RBUS_SUPPORT
+     	bool
+ 
+ endmenu
+@@ -471,27 +471,27 @@
+ menu "WiFi Operation Modes"
+ 	choice
+ 		prompt "Main Mode"
+-		default WIFI_MODE_AP
++		default MT7615E_WIFI_MODE_AP
+ 
+-		config WIFI_MODE_AP
++		config MT7615E_WIFI_MODE_AP
+ 				tristate "AP"
+-				select MT_AP_SUPPORT
++				select MT7615E_MT_AP_SUPPORT
+ 
+-		config WIFI_MODE_STA
++		config MT7615E_WIFI_MODE_STA
+ 				tristate "STA"
+ 				select MT_STA_SUPPORT
+ 
+-		config WIFI_MODE_BOTH
++		config MT7615E_WIFI_MODE_BOTH
+ 				tristate "APSTA"
+-				select MT_AP_SUPPORT
+-				select MT_STA_SUPPORT
++				select MT7615E_MT_AP_SUPPORT
++				select MT7615E_MT_STA_SUPPORT
+     endchoice
+ 
+-    if WIFI_MODE_AP || WIFI_MODE_BOTH
++    if MT7615E_WIFI_MODE_AP || MT7615E_WIFI_MODE_BOTH
+ 		source "drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Kconfig"
+     endif
+ 
+-    if WIFI_MODE_STA || WIFI_MODE_BOTH
++    if MT7615E_WIFI_MODE_STA || MT7615E_WIFI_MODE_BOTH
+ 		source "drivers/net/wireless/mtk/mt7615/mt_wifi_sta/Kconfig"
+     endif
+ endmenu	
+@@ -499,48 +499,48 @@
+ endif
+ 
+ if WIFI_RLT_MAC
+-	config RLT_MAC
++	config MT7615E_RLT_MAC
+ 		bool
+ 		default y
+ endif
+ 
+ if WIFI_RTMP_MAC
+-	config RTMP_MAC
++	config MT7615E_RTMP_MAC
+ 		bool
+ 		default y
+ endif
+ 
+ if WIFI_MT_MAC
+-	config MT_MAC
++	config MT7615E_MT_MAC
+ 		bool
+ 		default y
+ 
+-	config CHIP_MT7603E
++	config MT7615E_CHIP_MT7603E
+ 		bool
+ 		default n
+ 
+-	config CHIP_MT7615E
++	config MT7615E_CHIP_MT7615E
+ 		bool
+ 		default n
+ 
+-	config CHIP_MT7622
++	config MT7615E_CHIP_MT7622
+ 		bool
+ 		default n
+ 
+-	config CHIP_MT7663E
++	config MT7615E_CHIP_MT7663E
+ 		bool
+ 		default n
+ endif
+ 
+-if CHIP_MT7615E
++if MT7615E_CHIP_MT7615E
+ 	config MT_MAC
+ 		bool
+ 		default y
+-		select RATE_ADAPTION
+-		select RATE_ADAPT_AGBS_SUPPORT
+-		select DOT11_N_SUPPORT
+-		select DOT11_VHT_AC
+-		select HDR_TRANS_TX_SUPPORT
+-		select HDR_TRANS_RX_SUPPORT
++		select MT7615E_RATE_ADAPTION
++		select MT7615E_RATE_ADAPT_AGBS_SUPPORT
++		select MT7615E_DOT11_N_SUPPORT
++		select MT7615E_DOT11_VHT_AC
++		select MT7615E_HDR_TRANS_TX_SUPPORT
++		select MT7615E_HDR_TRANS_RX_SUPPORT
+ endif	
+ 
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Kconfig
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Kconfig	2019-04-10 21:22:35.676952969 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Kconfig	2019-04-10 21:35:30.875660080 +0800
+@@ -1,327 +1,327 @@
+-config MT_AP_SUPPORT
++config MT7615E_MT_AP_SUPPORT
+ 	tristate "MTK AP support"
+ #	depends on NET_RADIO
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
+ 
+-config WDS_SUPPORT
++config MT7615E_WDS_SUPPORT
+ 	bool "WDS"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config WIFI_EAP_FEATURE
++config MT7615E_WIFI_EAP_FEATURE
+ 	bool "EAP Feature"
+     depends on WIFI_DRIVER
+ 	default y
+ 
+-config MBSS_SUPPORT
++config MT7615E_MBSS_SUPPORT
+ 	bool "MBSSID"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-#config NEW_MBSSID_MODE
++#config MT7615E_NEW_MBSSID_MODE
+ #	bool "New MBSSID MODE"
+-#	depends on MT_AP_SUPPORT && MBSS_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT && MT7615E_MBSS_SUPPORT
+ #	depends on RALINK_RT3883 || RALINK_RT3352 || RALINK_RT5350 || RALINK_RT6352 || RALINK_MT7620
+ #	default y
+ 
+-#config ENHANCE_NEW_MBSSID_MODE
++#config MT7615E_ENHANCE_NEW_MBSSID_MODE
+ #	bool "Enhanced MBSSID mode"
+-#	depends on NEW_MBSSID_MODE
++#	depends on MT7615E_NEW_MBSSID_MODE
+ #	default y
+ 
+-config APCLI_SUPPORT
++config MT7615E_APCLI_SUPPORT
+ 	bool "AP-Client Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config APCLI_CERT_SUPPORT
++config MT7615E_APCLI_CERT_SUPPORT
+         bool "AP-Client TGn Cert Support"
+-	depends on MT_AP_SUPPORT
+-        depends on APCLI_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++        depends on MT7615E_APCLI_SUPPORT
+         default n
+ 
+-config MAC_REPEATER_SUPPORT
++config MT7615E_MAC_REPEATER_SUPPORT
+ 	bool "MAC Repeater Support"
+-	depends on MT_AP_SUPPORT
+-	depends on APCLI_SUPPORT
+-	depends on RALINK_RT6352 || RALINK_MT7620 || RALINK_MT7603E || MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_APCLI_SUPPORT
++	depends on RALINK_RT6352 || RALINK_MT7620 || RALINK_MT7603E || MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config MWDS
++config MT7615E_MWDS
+     bool "Mixed WDS(MWDS)"
+-    depends on MT_AP_SUPPORT
+-    select APCLI_SUPPORT
++    depends on MT7615E_MT_AP_SUPPORT
++    select MT7615E_APCLI_SUPPORT
+     default n
+ 
+-config MUMIMO_SUPPORT
++config MT7615E_MUMIMO_SUPPORT
+         bool "MU-MIMO Support"
+         depends on WIFI_DRIVER
+-        select MU_RA_SUPPORT
++        select MT7615E_MU_RA_SUPPORT
+         default y
+ 
+-config MU_RA_SUPPORT
++config MT7615E_MU_RA_SUPPORT
+   	bool "MU-RGA Support"
+-  	depends on MUMIMO_SUPPORT
++  	depends on MT7615E_MUMIMO_SUPPORT
+ 
+-config DOT11R_FT_SUPPORT
++config MT7615E_DOT11R_FT_SUPPORT
+ 	bool "802.11r Fast BSS Transition"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config DOT11K_RRM_SUPPORT
++config MT7615E_DOT11K_RRM_SUPPORT
+ 	bool "802.11k Radio Resource Management"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config INTERWORKING
++config MT7615E_INTERWORKING
+ 	bool "802.11u Interworking/Gas Support"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config MAP_SUPPORT
++config MT7615E_MAP_SUPPORT
+ 	bool "Multi-AP Support"
+-	depends on MT_AP_SUPPORT
+-	select MBO_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	select MT7615E_MBO_SUPPORT
+ 	default n
+-config OFFCHANNEL_SCAN_FEATURE
++config MT7615E_OFFCHANNEL_SCAN_FEATURE
+         bool "Channel Quality Monitor"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config SNIFFER_SUPPORT
++config MT7615E_SNIFFER_SUPPORT
+ 	bool "SNIFFER"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config ENTERPRISE_AP_SUPPORT
++config MT7615E_ENTERPRISE_AP_SUPPORT
+ 	bool "Enterprise AP Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config VLAN_SUPPORT
++config MT7615E_VLAN_SUPPORT
+ 	bool "VLAN Support"
+-	depends on MT_AP_SUPPORT
+-	depends on ENTERPRISE_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_ENTERPRISE_AP_SUPPORT
+ 	default n
+ 
+-config DYNAMIC_VLAN_SUPPORT
++config MT7615E_DYNAMIC_VLAN_SUPPORT
+ 	bool "Dynamic VLAN Support"
+-	depends on MT_AP_SUPPORT
+-	depends on ENTERPRISE_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_ENTERPRISE_AP_SUPPORT
+ 	default n
+ 
+-config CFG80211_SUPPORT
++config MT7615E_CFG80211_SUPPORT
+ 	bool "CFG80211"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+ #CUSTOMISED HOSTAPD
+-config CUSTOMISED_HOSTAPD_SUPPORT
++config MT7615E_CUSTOMISED_HOSTAPD_SUPPORT
+ 	bool "Customised Hostapd Support"
+-	depends on MT_AP_SUPPORT
+-	depends on CFG80211_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_CFG80211_SUPPORT
+ 	default n
+ 
+ #APCLI STA
+-config APCLI_STA_SUPPORT
++config MT7615E_APCLI_STA_SUPPORT
+ 	bool "APCLI STA Support"
+-	depends on APCLI_SUPPORT
+-	depends on CFG80211_SUPPORT
++	depends on MT7615E_APCLI_SUPPORT
++	depends on MT7615E_CFG80211_SUPPORT
+ 	default n
+ 
+ #WDS STA
+-config WDS_STA_SUPPORT
++config MT7615E_WDS_STA_SUPPORT
+ 	bool "WDS STA Support"
+-	depends on APCLI_SUPPORT
+-	depends on CFG80211_SUPPORT
++	depends on MT7615E_APCLI_SUPPORT
++	depends on MT7615E_CFG80211_SUPPORT
+ 	default n
+ 
+ #WDS AP
+-config MBSS_AS_WDS_AP_SUPPORT
++config MT7615E_MBSS_AS_WDS_AP_SUPPORT
+ 	bool "MBSS AS WDS AP Support"
+-	depends on MT_AP_SUPPORT
+-	depends on MBSS_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_MBSS_SUPPORT
+ 	default n
+ 
+-config DSCP_QOS_MAP_SUPPORT
++config MT7615E_DSCP_QOS_MAP_SUPPORT
+ 	bool "Dscp Qos Mapping Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config DSCP_PRI_SUPPORT
++config MT7615E_DSCP_PRI_SUPPORT
+ 	bool "Dscp Priority Mapping Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+ #HOSTAPD_MAP_SUPPORT
+-config HOSTAPD_MAP_SUPPORT
++config MT7615E_HOSTAPD_MAP_SUPPORT
+ 	bool "MAP with Hostapd Support"
+-	depends on MT_AP_SUPPORT
+-	depends on CFG80211_SUPPORT
+-	depends on MAP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_CFG80211_SUPPORT
++	depends on MT7615E_MAP_SUPPORT
+ 	default n
+ 
+-config MIN_PHY_RATE_SUPPORT
++config MT7615E_MIN_PHY_RATE_SUPPORT
+         bool "Minimum PHY rate support"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config FAST_UP_RATE_SUPPORT
++config MT7615E_FAST_UP_RATE_SUPPORT
+         bool "Fast UP rate support"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config RADIUS_MAC_AUTH_SUPPORT
++config MT7615E_RADIUS_MAC_AUTH_SUPPORT
+         bool "RADIUS MAC Auth Support"
+-        depends on ENTERPRISE_AP_SUPPORT
+-        depends on CFG80211_SUPPORT
++        depends on MT7615E_ENTERPRISE_AP_SUPPORT
++        depends on MT7615E_CFG80211_SUPPORT
+         default n
+ 
+-config CON_WPS_SUPPORT
++config MT7615E_CON_WPS_SUPPORT
+ 	bool "Concurrent WPS Support"
+-	depends on MT_AP_SUPPORT
+-	depends on APCLI_SUPPORT
+-	depends on WSC_INCLUDED
+-	depends on WSC_V2_SUPPORT
+-#	depends on MULTI_INF_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_APCLI_SUPPORT
++	depends on MT7615E_WSC_INCLUDED
++	depends on MT7615E_WSC_V2_SUPPORT
++#	depends on MT7615E_MULTI_INF_SUPPORT
+ 	default n
+ 
+-#config LLTD_SUPPORT
++#config MT7615E_LLTD_SUPPORT
+ #	bool "LLTD (Link Layer Topology Discovery Protocol)"
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ 
+-#config COC_SUPPORT
++#config MT7615E_COC_SUPPORT
+ #	bool "CoC Support"
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-config MCAST_RATE_SPECIFIC
++config MT7615E_MCAST_RATE_SPECIFIC
+ 	bool "User specific tx rate of mcast pkt"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-#config EXT_BUILD_CHANNEL_LIST
++#config MT7615E_EXT_BUILD_CHANNEL_LIST
+ #	bool "Extension Channel List"
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ 
+-#config AUTO_CH_SELECT_ENHANCE
++#config MT7615E_AUTO_CH_SELECT_ENHANCE
+ #	bool "Auto Channel Selection Enhancement"
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ 
+-config VOW_SUPPORT
++config MT7615E_VOW_SUPPORT
+ 	bool "MediaAir(VOW) support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-#config AIRPLAY_SUPPORT
++#config MT7615E_AIRPLAY_SUPPORT
+ #	bool "AIRPLAY Support"
+-#	depends on MT_AP_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
+ #	default n
+ 
+-config BAND_STEERING
++config MT7615E_BAND_STEERING
+ 	bool "Band Steering"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config LED_CONTROL_SUPPORT
++config MT7615E_LED_CONTROL_SUPPORT
+         bool "LED Control Support"
+         default n
+ 
+-config WLAN_HOOK
++config MT7615E_WLAN_HOOK
+        bool "WLAN hook Support"
+        depends on WIFI_DRIVER
+        default n
+ 
+-config RADIUS_ACCOUNTING_SUPPORT
++config MT7615E_RADIUS_ACCOUNTING_SUPPORT
+ 	bool "Radius Accounting Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config GREENAP_SUPPORT
++config MT7615E_GREENAP_SUPPORT
+ 	bool "GreenAP Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config TXRX_STAT_SUPPORT
++config MT7615E_TXRX_STAT_SUPPORT
+ 	bool "TxRx Stats Support"
+ 	depends on WIFI_DRIVER
+ 	default n
+ 
+-config PCIE_ASPM_DYM_CTRL_SUPPORT
++config MT7615E_PCIE_ASPM_DYM_CTRL_SUPPORT
+ 	bool "Pcie Aspm Dynamic Control Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config COEX_SUPPORT
++config MT7615E_COEX_SUPPORT
+ 	bool "Coex Support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config EASY_SETUP_SUPPORT
++config MT7615E_EASY_SETUP_SUPPORT
+ 	bool "Whole Home Coverage - Easy Setup"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config EVENT_NOTIFIER_SUPPORT
++config MT7615E_EVENT_NOTIFIER_SUPPORT
+ 	bool "Whole Home Coverage - Event Notifier"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default n
+ 
+-config AIR_MONITOR
++config MT7615E_AIR_MONITOR
+         bool "Air Monitor"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config WNM_SUPPORT
++config MT7615E_WNM_SUPPORT
+         bool "802.11v WNM Support"
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config WIFI_MSI_SUPPORT
++config MT7615E_WIFI_MSI_SUPPORT
+         bool "MSI support"
+         depends on PCI_MSI
+-        depends on CHIP_MT7615E
++        depends on MT7615E_CHIP_MT7615E
+         default n
+ 
+ 
+-#config ROAMING_ENHANCE_SUPPORT
++#config MT7615E_ROAMING_ENHANCE_SUPPORT
+ #	bool "Roaming Enhance Support"
+-#	depends on MT_AP_SUPPORT
+-#	depends on APCLI_SUPPORT
++#	depends on MT7615E_MT_AP_SUPPORT
++#	depends on MT7615E_APCLI_SUPPORT
+ #	default n
+ 
+-#config WIFI_FWD_SUPPORT
++#config MT7615E_WIFI_FWD_SUPPORT
+ #        bool "WiFi Forwarding Support"
+ #        default n
+ 
+-config WPA3_SUPPORT
++config MT7615E_WPA3_SUPPORT
+ 	bool "WPA3 support"
+-	depends on MT_AP_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
+ 	default y
+ 
+-config OWE_SUPPORT
++config MT7615E_OWE_SUPPORT
+ 	bool "Enhance OPEN(OWE) support"
+-	depends on MT_AP_SUPPORT
+-	depends on WPA3_SUPPORT
++	depends on MT7615E_MT_AP_SUPPORT
++	depends on MT7615E_WPA3_SUPPORT
+ 	default y
+ 
+-config VENDOR_FEATURE10_SUPPORT
++config MT7615E_VENDOR_FEATURE10_SUPPORT
+         bool "Vendor10 Feature Enable"
+         depends on WIFI_DRIVER
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config VENDOR_FEATURE11_SUPPORT
++config MT7615E_VENDOR_FEATURE11_SUPPORT
+         bool "Vendor11 Feature Enable"
+         depends on WIFI_DRIVER
+-        depends on MT_AP_SUPPORT
++        depends on MT7615E_MT_AP_SUPPORT
+         default n
+ 
+-config RCSA_SUPPORT
++config MT7615E_RCSA_SUPPORT
+ 	bool "Reverse-CSA"
+ 	depends on WIFI_DRIVER
+-	depends on MT_DFS_SUPPORT
+-	depends on APCLI_SUPPORT
++	depends on MT7615E_MT_DFS_SUPPORT
++	depends on MT7615E_APCLI_SUPPORT
+ 	default n
+Index: linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile
+===================================================================
+--- linux-3.10.108.orig/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile	2019-04-10 21:22:40.589117045 +0800
++++ linux-3.10.108/drivers/net/wireless/mtk/mt7615/mt_wifi_ap/Makefile	2019-04-10 22:24:17.181984090 +0800
+@@ -30,77 +30,77 @@
+ EXTRA_CFLAGS += -DCONFIG_RT_THIRD_CARD=$(CONFIG_RT_THIRD_CARD)
+ EXTRA_CFLAGS += -DCONFIG_RT_THIRD_IF_RF_OFFSET=$(CONFIG_RT_THIRD_IF_RF_OFFSET)
+ endif
+-ifeq ($(CONFIG_FIRST_IF_EEPROM_PROM),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_EEPROM_PROM),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_FIRST_CARD_EEPROM="\"prom\""
+ else
+-ifeq ($(CONFIG_FIRST_IF_EEPROM_EFUSE),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_EEPROM_EFUSE),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_FIRST_CARD_EEPROM="\"efuse\""
+ else
+-ifeq ($(CONFIG_FIRST_IF_EEPROM_FLASH),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_EEPROM_FLASH),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_FIRST_CARD_EEPROM="\"flash\""
+ endif
+ endif
+ endif
+-ifeq ($(CONFIG_SECOND_IF_EEPROM_PROM),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_EEPROM_PROM),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_SECOND_CARD_EEPROM="\"prom\""
+ else
+-ifeq ($(CONFIG_SECOND_IF_EEPROM_EFUSE),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_EEPROM_EFUSE),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_SECOND_CARD_EEPROM="\"efuse\""
+ else
+-ifeq ($(CONFIG_SECOND_IF_EEPROM_FLASH),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_EEPROM_FLASH),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_SECOND_CARD_EEPROM="\"flash\""
+ endif
+ endif
+ endif
+-ifeq ($(CONFIG_THIRD_IF_EEPROM_PROM),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_EEPROM_PROM),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_THIRD_CARD_EEPROM="\"prom\""
+ else
+-ifeq ($(CONFIG_THIRD_IF_EEPROM_EFUSE),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_EEPROM_EFUSE),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_THIRD_CARD_EEPROM="\"efuse\""
+ else
+-ifeq ($(CONFIG_THIRD_IF_EEPROM_FLASH),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_EEPROM_FLASH),y)
+ EXTRA_CFLAGS += -DCONFIG_RT_THIRD_CARD_EEPROM="\"flash\""
+ endif
+ endif
+ endif
+ endif
+ 
+-ifeq ($(CONFIG_FIRST_IF_EPAELNA),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_EPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_FIRST_IF_EPAELNA
+ else
+-ifeq ($(CONFIG_FIRST_IF_IPAILNA),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_IPAILNA),y)
+ EXTRA_CFLAGS += -DCONFIG_FIRST_IF_IPAILNA
+ else
+-ifeq ($(CONFIG_FIRST_IF_IPAELNA),y)
++ifeq ($(CONFIG_MT7615E_FIRST_IF_IPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_FIRST_IF_IPAELNA
+ endif
+ endif
+ endif
+-ifeq ($(CONFIG_SECOND_IF_EPAELNA),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_EPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_SECOND_IF_EPAELNA
+ else
+-ifeq ($(CONFIG_SECOND_IF_IPAILNA),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_IPAILNA),y)
+ EXTRA_CFLAGS += -DCONFIG_SECOND_IF_IPAILNA
+ else
+-ifeq ($(CONFIG_SECOND_IF_IPAELNA),y)
++ifeq ($(CONFIG_MT7615E_SECOND_IF_IPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_SECOND_IF_IPAELNA
+ endif
+ endif
+ endif
+-ifeq ($(CONFIG_THIRD_IF_EPAELNA),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_EPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_THIRD_IF_EPAELNA
+ else
+-ifeq ($(CONFIG_THIRD_IF_IPAILNA),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_IPAILNA),y)
+ EXTRA_CFLAGS += -DCONFIG_THIRD_IF_IPAILNA
+ else
+-ifeq ($(CONFIG_THIRD_IF_IPAELNA),y)
++ifeq ($(CONFIG_MT7615E_THIRD_IF_IPAELNA),y)
+ EXTRA_CFLAGS += -DCONFIG_THIRD_IF_IPAELNA
+ endif
+ endif
+ endif
+ 
+ #support built-in/ko for Openwrt/Linux SDK
+-obj-$(CONFIG_MT_AP_SUPPORT) += $(DRV_NAME).o
++obj-$(CONFIG_MT7615E_MT_AP_SUPPORT) += $(DRV_NAME).o
+ 
+ ifeq ($(CONFIG_MTK_EMI_7622),y)
+ EXTRA_CFLAGS += -DCONFIG_ARCH_MT7622
+@@ -195,14 +195,14 @@
+ EXTRA_CFLAGS += -DMULTI_PROFILE
+ cmm_objs += $(SRC_EMBEDDED_DIR)/common/multi_profile.o
+ 
+-ifeq ($(CONFIG_DEFAULT_5G_PROFILE),y)
++ifeq ($(CONFIG_MT7615E_DEFAULT_5G_PROFILE),y)
+ EXTRA_CFLAGS += -DDEFAULT_5G_PROFILE
+ endif
+ 
+ ########################################################
+ # Coex related files
+ ########################################################
+-ifeq ($(CONFIG_COEX_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_COEX_SUPPORT),y)
+    EXTRA_CFLAGS += -DCOEX_SUPPORT
+ 
+     cmm_objs += $(SRC_EMBEDDED_DIR)/mcu/bt_coex.o
+@@ -215,13 +215,13 @@
+ 		$(SRC_DIR)/rate_ctrl/ra_wrapper_embedded.o\
+ 		$(SRC_DIR)/rate_ctrl/ra_cfg.o
+ 
+-#ifeq ($(CONFIG_NEW_RATE_ADAPT_SUPPORT),y)
++#ifeq ($(CONFIG_MT7615E_NEW_RATE_ADAPT_SUPPORT),y)
+ #    EXTRA_CFLAGS += -DNEW_RATE_ADAPT_SUPPORT
+ #    rate_objs += $(SRC_DIR)/rate_ctrl/alg_grp_mt.o
+ #    rate_objs += $(SRC_DIR)/rate_ctrl/ra_table.o
+ #endif
+ 
+-ifeq ($(CONFIG_RATE_ADAPT_AGBS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RATE_ADAPT_AGBS_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DRATE_ADAPT_AGBS_SUPPORT
+ endif
+ 
+@@ -235,19 +235,19 @@
+ ########################################################
+ spec_objs += $(SRC_EMBEDDED_DIR)/common/ps.o
+ 
+-ifeq ($(CONFIG_UAPSD),y)
++ifeq ($(CONFIG_MT7615E_UAPSD),y)
+     EXTRA_CFLAGS += -DUAPSD_SUPPORT -DUAPSD_DEBUG
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/uapsd.o
+ endif
+ 
+-ifeq ($(CONFIG_MT_MAC),y)
++ifeq ($(CONFIG_MT7615E_MT_MAC),y)
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/mt_ps.o
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/mt_io.o
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/txs.o
+ endif
+ 
+ # WSC
+-ifeq ($(CONFIG_WSC_INCLUDED),y)
++ifeq ($(CONFIG_MT7615E_WSC_INCLUDED),y)
+     EXTRA_CFLAGS += -DWSC_INCLUDED -DWSC_SINGLE_TRIGGER
+ 
+     ifneq ($(CONFIG_USER_GOAHEAD_HTTPD),)
+@@ -258,11 +258,11 @@
+         EXTRA_CFLAGS += -DSDK_USER_LIGHTY
+     endif
+ 
+-    ifneq ($(CONFIG_MT_AP_SUPPORT),)
++    ifneq ($(CONFIG_MT7615E_MT_AP_SUPPORT),)
+         EXTRA_CFLAGS += -DWSC_AP_SUPPORT
+     endif
+ 
+-    ifneq ($(CONFIG_MT_STA_SUPPORT),)
++    ifneq ($(CONFIG_MT7615E_MT_STA_SUPPORT),)
+         EXTRA_CFLAGS += -DWSC_STA_SUPPORT
+     endif
+ 
+@@ -272,25 +272,25 @@
+                     $(SRC_EMBEDDED_DIR)/security/crypt_biginteger.o\
+                     $(SRC_EMBEDDED_DIR)/common/wsc_ufd.o
+ 
+-    ifeq ($(CONFIG_WSC_V2_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_WSC_V2_SUPPORT),y)
+         EXTRA_CFLAGS += -DWSC_V2_SUPPORT
+         spec_objs += $(SRC_EMBEDDED_DIR)/common/wsc_v2.o
+     endif
+ endif
+ 
+ # VHT
+-ifeq ($(CONFIG_DOT11_VHT_AC),y)
++ifeq ($(CONFIG_MT7615E_DOT11_VHT_AC),y)
+     EXTRA_CFLAGS += -DDOT11_VHT_AC
+     spec_objs += $(SRC_EMBEDDED_DIR)/mgmt/mgmt_vht.o\
+             $(SRC_EMBEDDED_DIR)/common/vht.o
+ 	# WFA VHT R2 PF
+-	ifeq ($(CONFIG_WFA_VHT_R2_PF),y)
++	ifeq ($(CONFIG_MT7615E_WFA_VHT_R2_PF),y)
+ 		EXTRA_CFLAGS += -DWFA_VHT_R2_PF
+ 	endif
+ endif
+ 
+ # WAPI
+-ifeq ($(CONFIG_WAPI_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WAPI_SUPPORT),y)
+     EXTRA_CFLAGS += -DWAPI_SUPPORT
+     ifeq ($(CONFIG_RALINK_RT3052),y)
+         EXTRA_CFLAGS += -DSOFT_ENCRYPT
+@@ -302,7 +302,7 @@
+ endif
+ 
+ # WPA3
+-ifeq ($(CONFIG_WPA3_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WPA3_SUPPORT),y)
+     EXTRA_CFLAGS += -DDOT11_SAE_SUPPORT -DDOT11_SUITEB_SUPPORT -DDOT11W_PMF_SUPPORT
+     EXTRA_CFLAGS += -DDOT11_SAE_OPENSSL_BN
+ 
+@@ -313,14 +313,14 @@
+   spec_objs += $(SRC_EMBEDDED_DIR)/security/ecc.o
+   spec_objs += $(SRC_EMBEDDED_DIR)/security/pmf.o
+ 
+-  ifeq ($(CONFIG_APCLI_SUPPORT),y)
++  ifeq ($(CONFIG_MT7615E_APCLI_SUPPORT),y)
+       EXTRA_CFLAGS += -DAPCLI_SAE_SUPPORT
+   endif
+ 
+ endif
+ 
+ # OWE
+-ifeq ($(CONFIG_OWE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_OWE_SUPPORT),y)
+     EXTRA_CFLAGS += -DCONFIG_OWE_SUPPORT -DDOT11W_PMF_SUPPORT
+     EXTRA_CFLAGS += -DDOT11_SAE_OPENSSL_BN
+ 
+@@ -331,14 +331,14 @@
+   spec_objs += $(SRC_EMBEDDED_DIR)/security/owe.o
+   spec_objs += $(SRC_EMBEDDED_DIR)/security/pmf.o
+ 
+-  ifeq ($(CONFIG_APCLI_SUPPORT),y)
++  ifeq ($(CONFIG_MT7615E_APCLI_SUPPORT),y)
+       EXTRA_CFLAGS += -DAPCLI_OWE_SUPPORT
+   endif
+ 
+ endif
+ 
+ # ACM
+-ifeq ($(CONFIG_WMM_ACM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WMM_ACM_SUPPORT),y)
+     EXTRA_CFLAGS += -DWMM_ACM_SUPPORT
+ 
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/acm_edca.o\
+@@ -347,8 +347,8 @@
+ endif
+ 
+ #PMF
+-ifeq ($(CONFIG_MT_MAC),y)
+-ifeq ($(CONFIG_DOT11W_PMF_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MT_MAC),y)
++ifeq ($(CONFIG_MT7615E_DOT11W_PMF_SUPPORT),y)
+     EXTRA_CFLAGS += -DDOT11W_PMF_SUPPORT
+ 
+     spec_objs += $(SRC_EMBEDDED_DIR)/security/pmf.o
+@@ -356,12 +356,12 @@
+ endif
+ 
+ # LLTD
+-ifeq ($(CONFIG_LLTD_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_LLTD_SUPPORT),y)
+     EXTRA_CFLAGS += -DLLTD_SUPPORT
+ endif
+ 
+ #RRM
+-ifeq ($(CONFIG_DOT11K_RRM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_DOT11K_RRM_SUPPORT),y)
+     EXTRA_CFLAGS += -DDOT11K_RRM_SUPPORT -DAP_SCAN_SUPPORT -DSCAN_SUPPORT -DAPPLE_11K_IOT
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/rrm_tlv.o \
+ 				 $(SRC_EMBEDDED_DIR)/common/rrm.o \
+@@ -369,12 +369,12 @@
+ endif
+ #EXTRA_CFLAGS += -DHOSTAPD_11K_SUPPORT
+ # TPC
+-ifeq ($(CONFIG_TPC_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_TPC_SUPPORT),y)
+     EXTRA_CFLAGS += -DTPC_SUPPORT
+ endif
+ 
+ # FTM
+-ifeq ($(CONFIG_FTM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FTM_SUPPORT),y)
+     EXTRA_CFLAGS += -DFTM_SUPPORT -DFTM_INITIATOR
+     EXTRA_CFLAGS += -DTMR_SUPPORT
+     EXTRA_CFLAGS += -DDOT11K_RRM_SUPPORT
+@@ -386,7 +386,7 @@
+ 				 $(SRC_EMBEDDED_DIR)/common/rrm_sanity.o
+ endif
+ 
+-ifeq ($(CONFIG_PASSPOINT_R2),y)
++ifeq ($(CONFIG_MT7615E_PASSPOINT_R2),y)
+ 	EXTRA_CFLAGS += -DCONFIG_DOT11U_INTERWORKING -DCONFIG_DOT11V_WNM -DCONFIG_HOTSPOT -DCONFIG_HOTSPOT_R2 -DWAPP_SUPPORT
+ 
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/wnm.o\
+@@ -395,62 +395,62 @@
+         spec_objs += $(SRC_EMBEDDED_DIR)/wapp/wapp.o
+ endif
+ 
+-ifeq ($(CONFIG_DSCP_QOS_MAP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_DSCP_QOS_MAP_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DDSCP_QOS_MAP_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_DSCP_PRI_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_DSCP_PRI_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DDSCP_PRI_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_MIN_PHY_RATE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MIN_PHY_RATE_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DMIN_PHY_RATE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_FAST_UP_RATE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FAST_UP_RATE_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DFAST_UP_RATE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_WNM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WNM_SUPPORT),y)
+         EXTRA_CFLAGS += -DCONFIG_DOT11V_WNM
+ 
+         spec_objs += $(SRC_EMBEDDED_DIR)/common/wnm.o
+ endif
+ 
+-ifeq ($(CONFIG_INTERWORKING),y)
++ifeq ($(CONFIG_MT7615E_INTERWORKING),y)
+         EXTRA_CFLAGS += -DCONFIG_DOT11U_INTERWORKING
+         spec_objs += $(SRC_EMBEDDED_DIR)/common/gas.o
+ endif
+ 
+ # MBO
+-ifeq ($(CONFIG_MBO_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MBO_SUPPORT),y)
+     EXTRA_CFLAGS += -DMBO_SUPPORT -DWAPP_SUPPORT
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/mbo.o
+     spec_objs += $(SRC_EMBEDDED_DIR)/wapp/wapp.o
+ endif
+ 
+-ifeq ($(CONFIG_TRACE_TCP_PKT),y)
++ifeq ($(CONFIG_MT7615E_TRACE_TCP_PKT),y)
+        EXTRA_CFLAGS += -DTRACELOG_TCP_PKT
+ endif
+ 
+-ifeq ($(CONFIG_BACKGROUND_SCAN_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_BACKGROUND_SCAN_SUPPORT),y)
+     EXTRA_CFLAGS += -DBACKGROUND_SCAN_SUPPORT
+ 
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/bgnd_scan.o
+ endif
+ 
+-ifeq ($(CONFIG_MT_DFS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MT_DFS_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DMT_DFS_SUPPORT -DCUSTOMISE_RDD_THRESHOLD_SUPPORT -DRDM_FALSE_ALARM_DEBUG_SUPPORT
+ 
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/cmm_rdm_mt.o
+ endif
+ 
+-ifeq ($(CONFIG_WIFI_EAP_FEATURE),y)
++ifeq ($(CONFIG_MT7615E_WIFI_EAP_FEATURE),y)
+ 	EXTRA_CFLAGS += -DWIFI_EAP_FEATURE
+ endif
+ 
+ # FT
+-ifeq ($(CONFIG_DOT11R_FT_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_DOT11R_FT_SUPPORT),y)
+ EXTRA_CFLAGS += -DDOT11R_FT_SUPPORT
+ dot11_ft_objs += $(SRC_EMBEDDED_DIR)/common/ft.o\
+                     $(SRC_EMBEDDED_DIR)/common/ft_tlv.o\
+@@ -464,7 +464,7 @@
+ endif
+ 
+ #SNIFFER
+-ifeq ($(CONFIG_SNIFFER_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_SNIFFER_SUPPORT),y)
+     EXTRA_CFLAGS += -DSNIFFER_SUPPORT
+ 
+     spec_objs += $(SRC_EMBEDDED_DIR)/common/sniffer_radiotap.o\
+@@ -472,53 +472,53 @@
+ endif
+ 
+ #EAP-TXRX Statsitics
+-ifeq ($(CONFIG_TXRX_STAT_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_TXRX_STAT_SUPPORT),y)
+ EXTRA_CFLAGS += -DTXRX_STAT_SUPPORT
+ endif
+ 
+ #VENDOR_FEATURE11
+-ifeq ($(CONFIG_VENDOR_FEATURE11_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_VENDOR_FEATURE11_SUPPORT),y)
+ EXTRA_CFLAGS += -DVENDOR_FEATURE11_SUPPORT -DTXRX_STAT_SUPPORT
+ endif
+ 
+ #HOSTAPD_MAP_SUPPORT
+-ifeq ($(CONFIG_HOSTAPD_MAP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_HOSTAPD_MAP_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DHOSTAPD_MAP_SUPPORT
+ endif
+ 
+ #ENTERPRISE_AP
+-ifeq ($(CONFIG_ENTERPRISE_AP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ENTERPRISE_AP_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DHOSTAPD_11R_SUPPORT
+ 	EXTRA_CFLAGS += -DMBSS_DTIM_SUPPORT
+-	ifeq ($(CONFIG_VLAN_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_VLAN_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DVLAN_SUPPORT
+ 	endif
+-	ifeq ($(CONFIG_RADIUS_MAC_AUTH_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_RADIUS_MAC_AUTH_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DRADIUS_MAC_AUTH_SUPPORT
+ 	endif
+-	ifeq ($(CONFIG_DYNAMIC_VLAN_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_DYNAMIC_VLAN_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DDYNAMIC_VLAN_SUPPORT
+ 	endif
+ 
+ endif
+ 
+ #CFG
+-ifeq ($(CONFIG_CFG80211_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_CFG80211_SUPPORT),y)
+     EXTRA_CFLAGS += -DRT_CFG80211_SUPPORT -DEXT_BUILD_CHANNEL_LIST
+     #WPA3 SUPPORT
+-	ifneq ($(CONFIG_HOSTAPD_MAP_SUPPORT),y)
++	ifneq ($(CONFIG_MT7615E_HOSTAPD_MAP_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DHOSTAPD_SAE_SUPPORT -DHOSTAPD_OWE_SUPPORT -DHOSTAPD_SUITEB_SUPPORT
+ 	endif
+-	ifeq ($(CONFIG_CUSTOMISED_HOSTAPD_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_CUSTOMISED_HOSTAPD_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DDISABLE_HOSTAPD_BEACON -DDISABLE_HOSTAPD_PROBE_RESP -DHOSTAPD_AUTO_CH_SUPPORT
+ 	endif
+-	ifeq ($(CONFIG_WDS_STA_SUPPORT),y)
+-		ifneq ($(CONFIG_HOSTAPD_MAP_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_WDS_STA_SUPPORT),y)
++		ifneq ($(CONFIG_MT7615E_HOSTAPD_MAP_SUPPORT),y)
+ 			EXTRA_CFLAGS += -DAPCLI_AS_WDS_STA_SUPPORT
+ 		endif
+ 	endif
+-	ifeq ($(CONFIG_APCLI_STA_SUPPORT),y)
+-		ifneq ($(CONFIG_HOSTAPD_MAP_SUPPORT),y)
++	ifeq ($(CONFIG_MT7615E_APCLI_STA_SUPPORT),y)
++		ifneq ($(CONFIG_MT7615E_HOSTAPD_MAP_SUPPORT),y)
+ 			EXTRA_CFLAGS += -DAPCLI_CFG80211_SUPPORT
+ 			spec_objs += $(SRC_EMBEDDED_DIR)/../os/linux/cfg80211/cfg80211_apcli.o
+ 		endif
+@@ -534,7 +534,7 @@
+ 
+ endif
+ 
+-ifeq ($(CONFIG_MAP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MAP_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DA4_CONN -DROUTING_TAB_SUPPORT -DWAPP_SUPPORT -DCONFIG_MAP_SUPPORT -DOFFCHANNEL_SCAN_FEATURE
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/map.o
+ 	spec_objs += $(SRC_EMBEDDED_DIR)/common/a4_conn.o
+@@ -546,29 +546,29 @@
+     EXTRA_CFLAGS += -DSDK_TIMER_WDG
+ endif
+ 
+-ifeq ($(CONFIG_OFFCHANNEL_SCAN_FEATURE),y)
++ifeq ($(CONFIG_MT7615E_OFFCHANNEL_SCAN_FEATURE),y)
+     EXTRA_CFLAGS += -DOFFCHANNEL_SCAN_FEATURE
+ endif
+ 
+-ifeq ($(CONFIG_VENDOR_FEATURE10_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_VENDOR_FEATURE10_SUPPORT),y)
+     EXTRA_CFLAGS += -DFOLLOW_HIDDEN_SSID_FEATURE
+     EXTRA_CFLAGS += -DCONVERTER_MODE_SWITCH_SUPPORT
+-    ifeq ($(CONFIG_MT_DFS_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_MT_DFS_SUPPORT),y)
+         EXTRA_CFLAGS += -DDFS_VENDOR10_CUSTOM_FEATURE
+     endif
+-    ifeq ($(CONFIG_MCAST_RATE_SPECIFIC),y)
++    ifeq ($(CONFIG_MT7615E_MCAST_RATE_SPECIFIC),y)
+         EXTRA_CFLAGS += -DMCAST_BCAST_RATE_SET_SUPPORT
+     endif
+-    ifeq ($(CONFIG_IGMP_SNOOP_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_IGMP_SNOOP_SUPPORT),y)
+         EXTRA_CFLAGS += -DIGMP_TVM_SUPPORT
+     endif
+-    ifeq ($(CONFIG_APCLI_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_APCLI_SUPPORT),y)
+         EXTRA_CFLAGS += -DVENDOR10_CUSTOM_RSSI_FEATURE
+ 	EXTRA_CFLAGS += -DBW_VENDOR10_CUSTOM_FEATURE
+     endif
+ endif
+ 
+-ifeq ($(CONFIG_MT_DFS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MT_DFS_SUPPORT),y)
+     EXTRA_CFLAGS += -DONDEMAND_DFS
+ endif
+ 
+@@ -589,13 +589,13 @@
+ #
+ func_objs :=
+ 
+-ifeq ($(CONFIG_IGMP_SNOOP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_IGMP_SNOOP_SUPPORT),y)
+     EXTRA_CFLAGS += -DIGMP_SNOOP_SUPPORT
+ 
+     func_objs += $(SRC_EMBEDDED_DIR)/common/igmp_snoop.o
+ endif
+ 
+-ifeq ($(CONFIG_BLOCK_NET_IF),y)
++ifeq ($(CONFIG_MT7615E_BLOCK_NET_IF),y)
+     EXTRA_CFLAGS += -DBLOCK_NET_IF
+ 
+     func_objs += $(SRC_EMBEDDED_DIR)/common/netif_block.o
+@@ -608,7 +608,7 @@
+     endif
+ endif
+ 
+-ifeq ($(CONFIG_SMART_CARRIER_SENSE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_SMART_CARRIER_SENSE_SUPPORT),y)
+     EXTRA_CFLAGS += -DSMART_CARRIER_SENSE_SUPPORT
+ 
+         spec_objs += $(SRC_EMBEDDED_DIR)/common/scs.o
+@@ -633,12 +633,12 @@
+             $(SRC_EMBEDDED_DIR)/ap/ap_vow.o\
+             $(SRC_DIR)/os/linux/ap_ioctl.o
+ 
+-ifeq ($(CONFIG_MBSS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MBSS_SUPPORT),y)
+     EXTRA_CFLAGS += -DMBSS_SUPPORT
+ 
+-    ifeq ($(CONFIG_NEW_MBSSID_MODE),y)
++    ifeq ($(CONFIG_MT7615E_NEW_MBSSID_MODE),y)
+         EXTRA_CFLAGS += -DNEW_MBSSID_MODE
+-        ifeq ($(CONFIG_ENHANCE_NEW_MBSSID_MODE),y)
++        ifeq ($(CONFIG_MT7615E_ENHANCE_NEW_MBSSID_MODE),y)
+             EXTRA_CFLAGS += -DENHANCE_NEW_MBSSID_MODE
+         endif
+     endif
+@@ -646,7 +646,7 @@
+     ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_mbss.o\
+             $(SRC_EMBEDDED_DIR)/ap/ap_mbss_inf.o
+ 
+-ifeq ($(CONFIG_MBSS_AS_WDS_AP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MBSS_AS_WDS_AP_SUPPORT),y)
+ EXTRA_CFLAGS += -DMBSS_AS_WDS_AP_SUPPORT
+ EXTRA_CFLAGS += -DCLIENT_WDS
+ ap_objs += $(SRC_EMBEDDED_DIR)/common/client_wds.o
+@@ -654,7 +654,7 @@
+ endif
+ 
+ 
+-ifeq ($(CONFIG_WDS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WDS_SUPPORT),y)
+     EXTRA_CFLAGS += -DWDS_SUPPORT
+ 
+     ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_wds.o\
+@@ -662,7 +662,7 @@
+             $(SRC_EMBEDDED_DIR)/common/client_wds.o
+ endif
+ 
+-ifeq ($(CONFIG_APCLI_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_APCLI_SUPPORT),y)
+     EXTRA_CFLAGS += -DAPCLI_SUPPORT -DMAT_SUPPORT -DMULTI_APCLI_SUPPORT -DAPCLI_AUTO_CONNECT_SUPPORT  -DAPCLI_AUTO_BW_TMP
+     #EXTRA_CFLAGS += -DAPCLI_CERT_SUPPORT -DAPCLI_CONNECTION_TRIAL
+     EXTRA_CFLAGS += -DDHCP_UC_SUPPORT
+@@ -679,11 +679,11 @@
+             $(SRC_EMBEDDED_DIR)/common/cmm_mat_pppoe.o\
+             $(SRC_EMBEDDED_DIR)/common/cmm_mat_ipv6.o
+ 
+-    ifeq ($(CONFIG_APCLI_CERT_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_APCLI_CERT_SUPPORT),y)
+         EXTRA_CFLAGS += -DAPCLI_CERT_SUPPORT
+     endif
+ 
+-    ifeq ($(CONFIG_MAC_REPEATER_SUPPORT),y)
++    ifeq ($(CONFIG_MT7615E_MAC_REPEATER_SUPPORT),y)
+         EXTRA_CFLAGS += -DMAC_REPEATER_SUPPORT
+ 
+         ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_repeater.o
+@@ -691,7 +691,7 @@
+ 
+ endif
+ 
+-ifeq ($(CONFIG_IDS_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_IDS_SUPPORT),y)
+     EXTRA_CFLAGS += -DIDS_SUPPORT
+ 
+     ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_ids.o
+@@ -703,59 +703,59 @@
+     ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_nintendo.o
+ endif
+ 
+-#ifeq ($(CONFIG_COC_SUPPORT),y)
++#ifeq ($(CONFIG_MT7615E_COC_SUPPORT),y)
+ #   EXTRA_CFLAGS += -DGREENAP_SUPPORT -DCOC_SUPPORT
+ #
+ #    ap_objs += $(SRC_DIR)/../hw_ctrl/greenap.o
+ #endif
+ 
+-ifeq ($(CONFIG_GREENAP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_GREENAP_SUPPORT),y)
+    EXTRA_CFLAGS += -DGREENAP_SUPPORT
+ 
+     ap_objs += $(SRC_DIR)/hw_ctrl/greenap.o
+ endif
+ 
+-ifeq ($(CONFIG_PCIE_ASPM_DYM_CTRL_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_PCIE_ASPM_DYM_CTRL_SUPPORT),y)
+    EXTRA_CFLAGS += -DPCIE_ASPM_DYM_CTRL_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_ATE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ATE_SUPPORT),y)
+     EXTRA_CFLAGS += -DCONFIG_ATE -DCONFIG_QA -DCONFIG_RT2880_ATE_CMD_NEW -DCONFIG_HW_HAL_OFFLOAD  #-DCSD_VERIFICATION -DINTERNAL_CAPTURE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_ICAP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ICAP_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DINTERNAL_CAPTURE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_SPECTRUM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_SPECTRUM_SUPPORT),y)
+ 		EXTRA_CFLAGS += -DWIFI_SPECTRUM_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_RTMP_FLASH_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RTMP_FLASH_SUPPORT),y)
+     EXTRA_CFLAGS += -DRTMP_FLASH_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_PRE_CAL_TRX_SET1_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_PRE_CAL_TRX_SET1_SUPPORT),y)
+     EXTRA_CFLAGS += -DPRE_CAL_TRX_SET1_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_RLM_CAL_CACHE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RLM_CAL_CACHE_SUPPORT),y)
+     EXTRA_CFLAGS += -DRLM_CAL_CACHE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_PRE_CAL_TRX_SET2_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_PRE_CAL_TRX_SET2_SUPPORT),y)
+     EXTRA_CFLAGS += -DPRE_CAL_TRX_SET2_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_CAL_BIN_FILE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_CAL_BIN_FILE_SUPPORT),y)
+     EXTRA_CFLAGS += -DCAL_BIN_FILE_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_RF_LOCKDOWN_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RF_LOCKDOWN_SUPPORT),y)
+     EXTRA_CFLAGS += -DRF_LOCKDOWN
+ endif
+ 
+-ifeq ($(CONFIG_LINK_TEST_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_LINK_TEST_SUPPORT),y)
+     EXTRA_CFLAGS += -DLINK_TEST_SUPPORT
+ endif
+ 
+@@ -763,68 +763,68 @@
+     EXTRA_CFLAGS += -DRTMP_TEMPERATURE_TX_ALC
+ endif
+ 
+-ifeq ($(CONFIG_TXBF_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_TXBF_SUPPORT),y)
+     EXTRA_CFLAGS += -DMCS_LUT_SUPPORT -DTXBF_SUPPORT -DVHT_TXBF_SUPPORT
+     ap_objs += $(SRC_DIR)/txbf/cmm_txbf_mt.o\
+                     $(SRC_DIR)/txbf/cmm_txbf_cal_mt.o\
+                     $(SRC_DIR)/txbf/txbf_wrapper_embedded.o
+ endif
+ 
+-ifeq ($(CONFIG_MUMIMO_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MUMIMO_SUPPORT),y)
+    EXTRA_CFLAGS += -DCFG_SUPPORT_MU_MIMO
+     ap_objs += $(SRC_EMBEDDED_DIR)/common/cmm_mumimo.o
+     ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_mumimo.o
+ endif
+ 
+-ifeq ($(CONFIG_MU_RA_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MU_RA_SUPPORT),y)
+    EXTRA_CFLAGS += -DCFG_SUPPORT_MU_MIMO_RA
+    ap_objs += $(SRC_EMBEDDED_DIR)/ap/ap_mura.o
+ endif
+ 
+-ifeq ($(CONFIG_CON_WPS_SUPPORT), y)
++ifeq ($(CONFIG_MT7615E_CON_WPS_SUPPORT), y)
+     EXTRA_CFLAGS += -DCON_WPS -DCON_WPS_AP_SAME_UUID
+ endif
+ 
+-ifeq ($(CONFIG_MCAST_RATE_SPECIFIC),y)
++ifeq ($(CONFIG_MT7615E_MCAST_RATE_SPECIFIC),y)
+     EXTRA_CFLAGS += -DMCAST_RATE_SPECIFIC
+ endif
+ 
+-ifeq ($(CONFIG_AIRPLAY_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_AIRPLAY_SUPPORT),y)
+     EXTRA_CFLAGS += -DAIRPLAY_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_BAND_STEERING),y)
++ifeq ($(CONFIG_MT7615E_BAND_STEERING),y)
+     EXTRA_CFLAGS += -DBAND_STEERING
+     ap_objs +=  $(SRC_EMBEDDED_DIR)/ap/ap_band_steering.o
+ endif
+ 
+-ifeq ($(CONFIG_AIR_MONITOR),y)
++ifeq ($(CONFIG_MT7615E_AIR_MONITOR),y)
+     EXTRA_CFLAGS += -DAIR_MONITOR
+ endif
+ 
+-ifeq ($(CONFIG_EASY_SETUP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_EASY_SETUP_SUPPORT),y)
+ $(DRV_NAME)-objs += $(SRC_EMBEDDED_DIR)/easy_setup/ez_cmm.o
+ endif
+ 
+-ifeq ($(CONFIG_MWDS),y)
++ifeq ($(CONFIG_MT7615E_MWDS),y)
+     ap_objs += $(SRC_EMBEDDED_DIR)/common/mwds.o
+     ap_objs += $(SRC_EMBEDDED_DIR)/common/a4_conn.o
+     ap_objs += $(SRC_EMBEDDED_DIR)/common/routing_tab.o
+ endif
+ 
+-ifeq ($(CONFIG_EVENT_NOTIFIER_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_EVENT_NOTIFIER_SUPPORT),y)
+     ap_objs += $(SRC_EMBEDDED_DIR)/common/event_notifier.o
+ endif
+ 
+-ifeq ($(CONFIG_VOW_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_VOW_SUPPORT),y)
+     EXTRA_CFLAGS += -DVOW_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_RED_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RED_SUPPORT),y)
+     EXTRA_CFLAGS += -DRED_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_FQ_SCH_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FQ_SCH_SUPPORT),y)
+     EXTRA_CFLAGS += -DFQ_SCH_SUPPORT
+ endif
+ 
+@@ -838,17 +838,17 @@
+             $(SRC_DIR)/os/linux/rt_profile.o\
+             $(SRC_DIR)/os/linux/rt_main_dev.o
+ 
+-ifeq ($(CONFIG_WLAN_HOOK),y)
++ifeq ($(CONFIG_MT7615E_WLAN_HOOK),y)
+ 	EXTRA_CFLAGS +=-DRTMP_WLAN_HOOK_SUPPORT
+ 	os_objs += $(SRC_DIR)/os/linux/rt_txrx_hook.o
+ endif
+ 
+-ifeq ($(CONFIG_MULTI_INF_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_MULTI_INF_SUPPORT),y)
+     EXTRA_CFLAGS += -DMULTI_INF_SUPPORT
+     os_objs += $(SRC_DIR)/os/linux/multi_main_dev.o
+ endif
+ 
+-ifeq ($(CONFIG_WIFI_WORK_QUEUE_BH),y)
++ifeq ($(CONFIG_MT7615E_WIFI_WORK_QUEUE_BH),y)
+     EXTRA_CFLAGS += -DWORKQUEUE_BH
+ endif
+ 
+@@ -941,11 +941,11 @@
+                 $(SRC_DIR)/os/linux/pci_main_dev.o
+ endif
+ 
+-ifeq ($(CONFIG_DBDC_MODE),y)
++ifeq ($(CONFIG_MT7615E_DBDC_MODE),y)
+ EXTRA_CFLAGS += -DDBDC_MODE
+ endif
+ 
+-ifeq ($(CONFIG_CHIP_MT7615E),y)
++ifeq ($(CONFIG_MT7615E_CHIP_MT7615E),y)
+ EXTRA_CFLAGS += -DMT7615 -DMT_BBP -DMT_RF -DRTMP_RF_RW_SUPPORT -DMT_MAC -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT
+ EXTRA_CFLAGS += -DMCS_LUT_SUPPORT -DA_BAND_SUPPORT
+ EXTRA_CFLAGS += -DRTMP_EFUSE_SUPPORT
+@@ -988,32 +988,32 @@
+ endif
+ endif
+ 
+-ifeq ($(CONFIG_CUSTOMER_VENDOR_IE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_CUSTOMER_VENDOR_IE_SUPPORT),y)
+     EXTRA_CFLAGS += -DCUSTOMER_VENDOR_IE_SUPPORT
+ endif
+-ifeq ($(CONFIG_G_BAND_256QAM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_G_BAND_256QAM_SUPPORT),y)
+ EXTRA_CFLAGS += -DG_BAND_256QAM
+-ifeq ($(CONFIG_BRCM_256QAM_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_BRCM_256QAM_SUPPORT),y)
+ EXTRA_CFLAGS += -DBRCM_256QAM
+ endif
+ endif
+ EXTRA_CFLAGS += -Wframe-larger-than=4096
+-ifeq ($(CONFIG_HDR_TRANS_TX_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_HDR_TRANS_TX_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DHDR_TRANS_TX_SUPPORT -DCUT_THROUGH_FULL_OFFLOAD
+ endif
+-ifeq ($(CONFIG_HDR_TRANS_RX_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_HDR_TRANS_RX_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DHDR_TRANS_RX_SUPPORT
+ endif
+ 
+-#ifeq ($(CONFIG_RATE_ADAPT_AGBS_SUPPORT),y)
++#ifeq ($(CONFIG_MT7615E_RATE_ADAPT_AGBS_SUPPORT),y)
+ #	EXTRA_CFLAGS += -DRACTRL_FW_OFFLOAD_SUPPORT
+ #endif
+ 
+-ifeq ($(CONFIG_TCP_RACK_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_TCP_RACK_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DREDUCE_TCP_ACK_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_LED_CONTROL_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_LED_CONTROL_SUPPORT),y)
+     EXTRA_CFLAGS += -DLED_CONTROL_SUPPORT
+ #    ifeq ($(CONFIG_WSC_INCLUDED),y)
+ #        EXTRA_CFLAGS += -DWSC_LED_SUPPORT
+@@ -1022,15 +1022,15 @@
+     func_objs += $(SRC_EMBEDDED_DIR)/common/rt_led.o
+ endif
+ 
+-ifeq ($(CONFIG_RADIUS_ACCOUNTING_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_RADIUS_ACCOUNTING_SUPPORT),y)
+ 	EXTRA_CFLAGS += -DRADIUS_ACCOUNTING_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_ATE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ATE_SUPPORT),y)
+ chip_objs += $(SRC_DIR)/ate/mt_mac/mt_testmode_dmac.o
+ endif
+ 
+-ifeq ($(CONFIG_FDB_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FDB_SUPPORT),y)
+     EXTRA_CFLAGS += -DMT_FDB
+     chip_objs += $(SRC_DIR)/mcu/mt_fdb.o
+ endif
+@@ -1062,7 +1062,7 @@
+                 $(SRC_DIR)/os/linux/pci_main_dev.o
+ endif
+ 
+-ifeq ($(CONFIG_CHIP_MT7663E),y)
++ifeq ($(CONFIG_MT7615E_CHIP_MT7663E),y)
+ EXTRA_CFLAGS += -DMT7663 -DMT_BBP -DMT_RF -DRTMP_PCI_SUPPORT -DRTMP_RF_RW_SUPPORT -DMT_MAC -DRTMP_MAC_PCI
+ EXTRA_CFLAGS += -DMT_DMAC
+ EXTRA_CFLAGS += -DMCS_LUT_SUPPORT -DA_BAND_SUPPORT
+@@ -1261,7 +1261,7 @@
+                 $(SRC_DIR)/os/linux/rt_rbus_pci_drv.o
+ endif
+ 
+-ifeq ($(CONFIG_RTMP_FLASH_SUPPORT)$(CONFIG_MTD),yy)
++ifeq ($(CONFIG_MT7615E_RTMP_FLASH_SUPPORT)$(CONFIG_MTD),yy)
+ ifeq ($(CONFIG_SUPPORT_OPENWRT),y)
+ ifeq ($(CONFIG_MTD_SPI_NOR),y)
+ EXTRA_CFLAGS += -DCONFIG_WIFI_MTD
+@@ -1312,7 +1312,7 @@
+                     $(SRC_DIR)/os/linux/rt_rbus_pci_util.o\
+                     #$(SRC_DIR)/os/linux/rbus_main_dev.o
+ 
+-ifeq ($(CONFIG_ATE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ATE_SUPPORT),y)
+ $(DRV_NAME)-objs += $(SRC_DIR)/ate/ate_agent.o\
+                     $(SRC_DIR)/ate/testmode_ioctl.o\
+ 		    $(SRC_DIR)/ate/mt_mac/mt_testmode.o\
+@@ -1320,11 +1320,11 @@
+ endif
+ 
+ 
+-ifeq ($(CONFIG_TCP_RACK_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_TCP_RACK_SUPPORT),y)
+ $(DRV_NAME)-objs += $(SRC_EMBEDDED_DIR)/common/cmm_tcprack.o
+ endif
+ 
+-ifeq ($(CONFIG_LED_CONTROL_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_LED_CONTROL_SUPPORT),y)
+     EXTRA_CFLAGS += -DLED_CONTROL_SUPPORT
+ #    ifeq ($(CONFIG_WSC_INCLUDED),y)
+ #        EXTRA_CFLAGS += -DWSC_LED_SUPPORT
+@@ -1348,7 +1348,7 @@
+ EXTRA_CFLAGS += -DDOT11_N_SUPPORT -DDOT11N_DRAFT3 -DSTATS_COUNT_SUPPORT -DIAPP_SUPPORT -DDOT1X_SUPPORT
+ #EXTRA_CFLAGS += -DRALINK_ATE -DRALINK_QA -DCONFIG_RT2880_ATE_CMD_NEW
+ 
+-ifeq ($(CONFIG_FAST_NAT_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FAST_NAT_SUPPORT),y)
+ EXTRA_CFLAGS += -DCONFIG_FAST_NAT_SUPPORT
+ endif
+ 
+@@ -1359,7 +1359,7 @@
+ # use the function to avoid to locate in some noise environments
+ #EXTRA_CFLAGS += -DQLOAD_FUNC_BUSY_TIME_ALARM
+ 
+-ifeq ($(CONFIG_MEMORY_OPTIMIZATION),y)
++ifeq ($(CONFIG_MT7615E_MEMORY_OPTIMIZATION),y)
+ EXTRA_CFLAGS += -DMEMORY_OPTIMIZATION
+ else
+ #EXTRA_CFLAGS += -DDBG
+@@ -1374,19 +1374,19 @@
+ EXTRA_CFLAGS += -DRACTRL_LIMIT_MAX_PHY_RATE=1300
+ endif
+ 
+-ifeq ($(CONFIG_FAST_NAT_SUPPORT),y)
+-ifeq ($(CONFIG_WLAN_HOOK),y)
+-ifeq ($(CONFIG_WHNAT_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_FAST_NAT_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_WLAN_HOOK),y)
++ifeq ($(CONFIG_MT7615E_WHNAT_SUPPORT),y)
+ EXTRA_CFLAGS += -DWHNAT_SUPPORT
+ else
+-ifeq ($(CONFIG_WHNAT_SUPPORT),m)
++ifeq ($(CONFIG_MT7615E_WHNAT_SUPPORT),m)
+ EXTRA_CFLAGS += -DWHNAT_SUPPORT
+ endif
+ endif
+ endif
+ endif
+ 
+-ifeq ($(CONFIG_EASY_SETUP_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_EASY_SETUP_SUPPORT),y)
+ EXTRA_CFLAGS += -DWH_EZ_SETUP
+ EXTRA_CFLAGS += -DNEW_CONNECTION_ALGO
+ EXTRA_CFLAGS += -DEZ_NETWORK_MERGE_SUPPORT
+@@ -1397,23 +1397,23 @@
+ EXTRA_CFLAGS += -DEZ_PUSH_BW_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_MWDS),y)
++ifeq ($(CONFIG_MT7615E_MWDS),y)
+ EXTRA_CFLAGS += -DMWDS -DA4_CONN -DROUTING_TAB_SUPPORT
+ endif
+ 
+-ifeq ($(CONFIG_EVENT_NOTIFIER_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_EVENT_NOTIFIER_SUPPORT),y)
+ EXTRA_CFLAGS += -DWH_EVENT_NOTIFIER
+ endif
+ 
+-#ifeq ($(CONFIG_WIFI_FWD_SUPPORT),y)
++#ifeq ($(CONFIG_MT7615E_WIFI_FWD_SUPPORT),y)
+ EXTRA_CFLAGS += -DCONFIG_WIFI_PKT_FWD
+ #endif
+ 
+-#ifeq ($(CONFIG_MTFWD_SUPPORT),y)
++#ifeq ($(CONFIG_MT7615E_MTFWD_SUPPORT),y)
+ EXTRA_CFLAGS += -DMTFWD
+ #endif
+ 
+-ifeq ($(CONFIG_ROAMING_ENHANCE_SUPPORT),y)
++ifeq ($(CONFIG_MT7615E_ROAMING_ENHANCE_SUPPORT),y)
+ EXTRA_CFLAGS += -DROAMING_ENHANCE_SUPPORT
+ endif
+ 
+@@ -1424,11 +1424,11 @@
+ EXTRA_CFLAGS += -Inet/nat
+ #EXTRA_CFLAGS += -DDBG_STARVATION
+ ifeq ($(CONFIG_SUPPORT_OPENWRT),y)
+-ifeq ($(CONFIG_MT_WIFI),m)
++ifeq ($(CONFIG_MT7615E_MT_WIFI),m)
+ EXTRA_CFLAGS += -DMT_WIFI_MODULE
+ endif
+ else
+-ifeq ($(CONFIG_MT_WIFI),m)
++ifeq ($(CONFIG_MT7615E_MT_WIFI),m)
+ EXTRA_CFLAGS += -DMT_WIFI_MODULE
+ endif
+ endif

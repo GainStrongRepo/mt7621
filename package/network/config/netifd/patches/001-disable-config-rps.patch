@@ -1,0 +1,14 @@
+Index: netifd-2015-12-16/system-linux.c
+===================================================================
+--- netifd-2015-12-16.orig/system-linux.c	2016-01-21 14:43:12.000000000 +0800
++++ netifd-2015-12-16/system-linux.c	2018-08-29 18:00:28.546748000 +0800
+@@ -1148,6 +1148,9 @@
+ 	long n_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+ 	int val;
+ 
++	/* we config by smp.sh, by dragon xiong, @18/08/29 */
++	return;
++
+ 	if (n_cpus < 2)
+ 		return;
+ 

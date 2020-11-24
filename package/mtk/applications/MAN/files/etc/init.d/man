@@ -1,0 +1,63 @@
+#!/bin/sh /etc/rc.common
+
+#START=94
+STOP=94
+
+#USE_PROCD=1
+
+start_service() {
+	profiles=`find /etc/wireless -name "mt76*.dat" | grep -v sku`
+	easy_band=0
+	non_easy_band=0
+	multi_profile=1
+	easy_grp_id=0
+	easy_grp_id_cnt=0
+	easy_gen_grp_id=0
+	easy_gen_grp_id_cnt=0
+	for profile in $profiles; do
+		wificonf path $profile > /dev/null;
+		en=`wificonf get ApCliEzEnable`
+		easy_grp_id=`wificonf get ApCliEzGroupID`
+			echo "easy_grp_id is $easy_grp_id"
+		easy_gen_grp_id=`wificonf get ApCliEzGenGroupID`
+			echo "easy_gen_grp_id is $easy_gen_grp_id"
+		if [ "1" == "$en" ]; then
+			echo "$profile easy-setup enabled";
+			let easy_band+=1;
+		else
+			echo "$profile easy-setup disabled";
+			let non_easy_band+=1;
+		fi
+
+		if [ "" != "$easy_grp_id" ]; then
+			let easy_grp_id_cnt+=1;
+		fi
+		if [ "" != "$easy_gen_grp_id" ]; then
+			let easy_gen_grp_id_cnt+=1;
+		fi
+	done
+
+	echo easy band $easy_band
+	echo non_easy_band $non_easy_band
+	echo easy_group_id count $easy_grp_id_cnt
+	echo easy_gengroup_id count $easy_gen_grp_id_cnt
+        if [ "$easy_band" != "0" ] && [ "$easy_grp_id_cnt" != "0" -o "$easy_gen_grp_id_cnt" != "0" ]; then
+		uci set dhcp.lan.ignore=""; uci commit; /etc/init.d/dnsmasq reload;
+		(app_ez > /tmp/app_ez.log 2>&1 &);
+		sleep 3;
+		ManDaemon > /tmp/ManDaemon.log 2>&1
+	fi
+}
+
+stop_service() {
+	killall -9 app_ez
+	killall -9 ManDaemon
+}
+
+start() {                     
+	start_service $@      
+}                           
+
+stop() {                    
+	stop_service $@     
+} 
